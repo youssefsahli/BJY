@@ -1,0 +1,21 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+</head>
+
+<body>
+	<canvas id="tutorial" width="150" height="150"></canvas>
+
+	<script type="text/javascript">
+		function draw() {
+			const canvas = document.getElementById("tutorial");
+			if (canvas.getContext) {
+				const ctx = canvas.getContext("2d");
+			}
+		}
+		window.addEventListener("load", draw);
+	</script>
+</body>
+</html>
