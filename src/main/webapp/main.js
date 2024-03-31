@@ -2,48 +2,9 @@
  * Y. Sahli GPLv3
  * Main Canvas File
  */
-function windowToCanvas(canvas, x, y) {
-	// Tu donnes les coordonnées pour la fenêtre → coordonnées du canvas.
-	// !! Non testé !!
-	// TODO Faire tests
-	var bbox = canvas.getBoundingClientRect();
-	return {
-		x: x - bbox.left * (canvas.width / bbox.width),
-		y: y - bbox.top * (canvas.height / bbox.height)
-	};
-}
-
-// Barebone vector class
-class Vec2 {
-	constructor(x, y) {
-		this.x = x;
-		this.y = y;
-	}
-	static ZERO() {
-		return new Vec2(0, 0);
-	}
-
-	static ONE() {
-		return new Vec2(1, 1);
-	}
-
-	times(n) {
-		return new Vec2(this.x * n, this.y * n);
-	}
-
-	divide(n) {
-		return new Vec2(this.x / n, this.y / n);
-	}
-
-	add(v) {
-		return new Vec2(this.x + v.x, this.y + v.y);
-	}
-
-	sub(v) {
-		return new Vec2(this.x - v.x, this.y - v.y);
-	}
-
-}
+import { InputAction } from "./input_action.js";
+import { Vec2 } from "./vec2.js";
+import {makeGradient} from "./utils.js";
 
 class CanvasObject extends Vec2 {
 	// Ajouter hidden ? destroyable ?
@@ -113,20 +74,11 @@ class Grid extends CanvasObject {
 
 }
 
-canvas = document.getElementById("canvas");
+var canvas = document.getElementById("canvas");
 const canvasWidth = canvas.width;
 const canvasHeight = canvas.height;
 var gameGrid;
 var player;
-
-function makeGradient(c1, c2) {
-	const canvas = document.getElementById("canvas");
-	const ctx = canvas.getContext("2d");
-	var gradient = ctx.createLinearGradient(0, 0, 300, -20);
-	gradient.addColorStop(0, c1);
-	gradient.addColorStop(1, c2);
-	return gradient;
-}
 
 function init() {
 	gameGrid = new Grid();
