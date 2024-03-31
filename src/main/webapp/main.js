@@ -51,7 +51,7 @@ class Brick extends CanvasObject {
 	width = 71;
 	height = 36;
 	padding = 5;
-	color = '#e01b24';
+	color = makeGradient('#99c1f1', '#1a5fb4');
 
 	constructor(x, y) {
 		super(x, y);
@@ -61,7 +61,7 @@ class Brick extends CanvasObject {
 		let pad = this.padding;
 		ctx.fillStyle = this.color;
 		ctx.fillRect(this.x + pad,
-			this.y + pad, 
+			this.y + pad,
 			this.width - pad, this.height - pad);
 	}
 }
@@ -73,12 +73,12 @@ class Slider extends Brick {
 		this.padding = 0;
 		this.height = 35;
 	}
-	
-	update () {
-		
+
+	update() {
+
 	}
-	
-	render (ctx) {
+
+	render(ctx) {
 		super.render(ctx);
 	}
 }
@@ -113,14 +113,23 @@ const canvasHeight = canvas.height;
 var gameGrid;
 var player;
 
+function makeGradient(c1, c2) {
+	const canvas = document.getElementById("canvas");
+	const ctx = canvas.getContext("2d");
+	var gradient = ctx.createLinearGradient(0, 0, 300, -20);
+	gradient.addColorStop(0, c1);
+	gradient.addColorStop(1, c2);
+	return gradient;
+}
+
 function init() {
 	gameGrid = new Grid();
 	player = new Slider(140, 220);
-	player.color = '#c0bfbc'
+	player.color = makeGradient('#99c1f1', '#26a269');
 }
 
 function draw() {
-	
+
 	if (canvas.getContext) {
 		const ctx = canvas.getContext("2d");
 		// Clear context
