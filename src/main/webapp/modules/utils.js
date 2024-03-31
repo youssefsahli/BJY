@@ -69,3 +69,7 @@ export function clamp(n, a, b) {
     if (n < mi) return mi;
     return n;
 }
+
+export function rand(min, max) {
+  return Math.random() * (max - min) + min;
+}

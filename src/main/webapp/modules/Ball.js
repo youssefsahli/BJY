@@ -8,21 +8,32 @@ export class Ball extends CanvasObject {
     fixed = true;
     direction = Vec2.ZERO;
     speed = 2;
-    constructor (x, y) {
+    constructor(x, y) {
         super(x, y);
     }
     
-    update () {
-        super.move(this.direction.times(this.speed));
-        if (this.x >= canvas.width-this.radius || this.x <= this.radius) {
-            this.direction.x *= -1;
-        } else 
-            if (this.y >= canvas.height-this.radius) {
-                this.direction.y *= -1;
-            }
+    collide (v) {
+        this.direction = this.direction.bounce(v);
     }
-    
-    render (ctx) {
+
+    update() {
+        super.move(this.direction.times(this.speed));
+        if (this.x >= canvas.width - this.radius) {
+            this.collide(Vec2.LEFT);
+        } else
+        if (this.x <= this.radius) {
+            this.collide(Vec2.RIGHT);
+        } else
+        if (this.y >= canvas.height - this.radius) {
+            this.collide(Vec2.DOWN);
+        } else
+        if (this.y <= this.radius) {
+            this.collide(Vec2.UP);
+        }
+
+    }
+
+    render(ctx) {
         circ(ctx, this.color, this.x, this.y, this.radius);
     }
 }
