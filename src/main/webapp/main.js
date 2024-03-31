@@ -34,8 +34,8 @@ function draw() {
         const x = canvas.width / 10 + j * brickWidth;
         const y = canvas.height / 10 + i * brickHeight;
 
-        if (i % 2 == 0) ctx.fillStyle = "crimson";
-        else ctx.fillStyle = "darkred";
+        if (i % 2 == 0) ctx.fillStyle = "green";
+        else ctx.fillStyle = "yellow";
         ctx.fillRect(x, y, brickWidth, brickHeight);
       }
     }
