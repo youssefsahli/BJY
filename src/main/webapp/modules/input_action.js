@@ -18,14 +18,17 @@ class CallableLoop {
      * @returns {Boolean}
      */
     start () {
-        return !this.id ? setInterval(this.callback, 16) : false;
+        return !this.id ? this.id = setInterval(this.callback, 16) : false;
     }
     /**
      * @description Stops the loop
      * @returns {Boolean}
      */
     stop () {
-        return this.id ? clearInterval(this.id) : false;
+        if (this.id) {
+            clearInterval(this.id);
+            this.id = null;
+        }
     }
 }
 
@@ -38,7 +41,7 @@ class InputAction {
      * 
      * @param {String} name
      * @param {String} key
-     * @param {CallableInput} func
+     * @param {Callable} func
      * @returns {InputAction}
      */
     constructor(name, key, func) {
@@ -47,14 +50,18 @@ class InputAction {
         /**
          * @description When key pressed, execute async? func
          */
-        this.func = func; 
+        this.callback = new CallableLoop(func); 
     }
     /**
      * @description WARNING starts a looped callback
      * @returns {unresolved}
      */
     trigger () {
-        return this.func();
+        return this.callback.start();
+    }
+    
+    stop () {
+        return this.callback.stop();
     }
 }
 
@@ -81,7 +88,7 @@ class ActionMap extends Map {
      * @returns {undefined}
      */
     lookfor (key) {
-        return super.has(key) ? super.get(key).trigger() : false;
+        return super.has(key) ? super.get(key) : false;
     }
     
 }
@@ -95,6 +102,7 @@ export class InputHandler {
     constructor() {
         // lambda necessaire pour garder le contexte de classe
         window.addEventListener('keydown', (e) => this.listen(e), false);
+        window.addEventListener('keyup',   (e) => this.listen(e), false);
         this.actions = new ActionMap();
     }
     /**
@@ -115,8 +123,15 @@ export class InputHandler {
      */
     listen (event) {
         if (event.repeat) return; // We look for keyup to stop the callback
-        if (this.actions.lookfor (event.key) !== false) {
-//            console.log(event.key);
+        let A = this.actions.lookfor (event.key);
+        if (!A) return;
+        switch (event.type) {
+            case 'keyup' : 
+                A.stop();
+                break;
+            case 'keydown':
+                A.trigger();
+                break;
         }
     }
 }
