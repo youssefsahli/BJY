@@ -44,7 +44,7 @@ export class InputHandler {
         window.addEventListener('keydown', this.listen);
     }
     
-    this.listen () {
+    listen () {
         
     }
 }
