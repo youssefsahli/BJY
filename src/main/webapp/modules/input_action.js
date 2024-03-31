@@ -4,16 +4,55 @@
  */
 
 /**
+ * @class Takes care of looped callbacks
+ * @type CallableLoop
+ */
+class CallableLoop {
+    constructor(cb) {
+        this.callback = cb;
+    }
+    id;
+    callback;
+    /**
+     * @description Starts the loop
+     * @returns {Boolean}
+     */
+    start () {
+        return !this.id ? setInterval(this.callback, 16) : false;
+    }
+    /**
+     * @description Stops the loop
+     * @returns {Boolean}
+     */
+    stop () {
+        return this.id ? clearInterval(this.id) : false;
+    }
+}
+
+/**
  * 
  * @type InputAction
  */
 class InputAction {
+    /**
+     * 
+     * @param {String} name
+     * @param {String} key
+     * @param {CallableInput} func
+     * @returns {InputAction}
+     */
     constructor(name, key, func) {
         this.name = name;
         this.key = key;
-        this.func = func; // When key pressed, execute async? func
+        /**
+         * @description When key pressed, execute async? func
+         */
+        this.func = func; 
     }
-    
+    /**
+     * @description WARNING starts a looped callback
+     * @returns {unresolved}
+     */
     trigger () {
         return this.func();
     }
@@ -33,7 +72,8 @@ class ActionMap extends Map {
      * @returns {ActionMap}
      */
     register (i) {
-        return super.set(i.key, i.func);
+        
+        return super.set(i.key, i);
     }
     /**
      * 
@@ -59,11 +99,24 @@ export class InputHandler {
     }
     /**
      * 
+     * @param {String} name
+     * @param {String} key
+     * @param {Callable} func
+     * @returns {undefined}
+     */
+    addAction (name, key, func) {
+        let A = new InputAction(name, key, func);
+        return this.actions.register(A);
+    }
+    /**
+     * 
      * @param {KeyboardEvent} event
      * @returns {undefined}
      */
     listen (event) {
-        console.log(event.key);
-        this.actions.lookfor (event.key);
+        if (event.repeat) return; // We look for keyup to stop the callback
+        if (this.actions.lookfor (event.key) !== false) {
+//            console.log(event.key);
+        }
     }
 }
