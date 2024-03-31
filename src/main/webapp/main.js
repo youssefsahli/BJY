@@ -2,6 +2,7 @@
  * Y. Sahli GPLv3
  * Main Canvas File
  */
+import { InputHandler } from "./modules/input_action.js";
 import { Vec2 } from "./modules/vec2.js";
 import {makeGradient} from "./modules/utils.js";
 
@@ -35,7 +36,7 @@ class Brick extends CanvasObject {
 class Slider extends Brick {
     constructor(x, y) {
         super(x, y);
-        this.velocity = Vec2.ZERO();
+        this.velocity = Vec2.ZERO;
         this.padding = 0;
         this.height = 35;
     }
@@ -46,6 +47,15 @@ class Slider extends Brick {
 
     render(ctx) {
         super.render(ctx);
+    }
+    /**
+     * 
+     * @param {Vec2} vec
+     * @returns {undefined}
+     */
+    move(vec) {
+        this.x += vec.x;
+        this.y += vec.y;
     }
 }
 
@@ -68,7 +78,7 @@ class Grid extends CanvasObject {
     }
 
     render(ctx) {
-        this.bricks.forEach((b) => b.render(ctx))
+        this.bricks.forEach((b) => b.render(ctx));
     }
 
 }
@@ -78,8 +88,12 @@ const canvasWidth = canvas.width;
 const canvasHeight = canvas.height;
 var gameGrid;
 var player;
+var inputHandler;
 
 function init() {
+    inputHandler = new InputHandler();
+    inputHandler.addAction("Left", "ArrowLeft", () => player.move(Vec2.LEFT));
+    inputHandler.addAction("Right", "ArrowRight", () => player.move(Vec2.RIGHT));
     gameGrid = new Grid();
     player = new Slider(110, 220);
     player.color = makeGradient('#99c1f1', '#26a269');
