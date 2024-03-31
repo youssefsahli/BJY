@@ -124,8 +124,12 @@ function makeGradient(c1, c2) {
 
 function init() {
 	gameGrid = new Grid();
-	player = new Slider(140, 220);
+	player = new Slider(110, 220);
 	player.color = makeGradient('#99c1f1', '#26a269');
+}
+
+function update () {
+	
 }
 
 function draw() {
@@ -141,4 +145,5 @@ function draw() {
 }
 init();
 // 16 ms for 60 fps
+setInterval(update, 16);
 setInterval(draw, 16);
