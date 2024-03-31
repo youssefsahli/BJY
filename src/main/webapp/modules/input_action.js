@@ -41,6 +41,10 @@ class ActionMap extends Map {
  */
 export class InputHandler {
     constructor() {
+        window.addEventListener('keydown', this.listen);
+    }
+    
+    this.listen () {
         
     }
 }
