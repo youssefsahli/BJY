@@ -12,6 +12,7 @@ function windowToCanvas(canvas, x, y) {
 		y: y - bbox.top * (canvas.height / bbox.height)
 	};
 }
+
 // Barebone vector class
 class Vec2 {
 	constructor(x, y) {
@@ -80,7 +81,7 @@ class Slider extends Brick {
 	}
 
 	update() {
-	// TODO Movement
+		// TODO Movement
 	}
 
 	render(ctx) {
@@ -133,7 +134,7 @@ function init() {
 	player.color = makeGradient('#99c1f1', '#26a269');
 }
 
-function update () {
+function update() {
 	// called 60 times per second
 }
 
@@ -150,5 +151,7 @@ function draw() {
 }
 init();
 // 16 ms for 60 fps
-setInterval(update, 16);
-setInterval(draw, 16);
+setInterval(() => {
+	update();
+	draw();
+}, 16);
