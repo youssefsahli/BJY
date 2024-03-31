@@ -35,8 +35,30 @@ function draw() {
         if (i % 2 == 0) ctx.fillStyle = "green";
         else ctx.fillStyle = "yellow";
         ctx.fillRect(x, y, brickWidth, brickHeight);
+        ctx.strokeRect(x, y, brickWidth, brickHeight);
       }
     }
+
+    // Dessine la raquette
+    const paddleWidth = 150;
+    const paddleHeight = 20;
+    const paddleX = (canvas.width - paddleWidth) / 2;
+    const paddleY = canvas.height - paddleHeight - 10;
+
+    ctx.fillStyle = "darksalmon";
+    ctx.fillRect(paddleX, paddleY, paddleWidth, paddleHeight);
+
+    // Dessine la balle
+    const ballRadius = 10;
+    const ballX = canvas.width / 2;
+    const ballY = paddleY - ballRadius;
+    const dx = 2;
+    const dy = -2;
+
+    ctx.beginPath();
+    ctx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2);
+    ctx.fillStyle = "white";
+    ctx.fill();
   }
 }
 draw();
