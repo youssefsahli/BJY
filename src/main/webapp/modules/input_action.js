@@ -13,6 +13,10 @@ class InputAction {
         this.key = key;
         this.func = func; // When key pressed, execute async? func
     }
+    
+    trigger () {
+        return this.func();
+    }
 }
 
 /**
@@ -31,6 +35,14 @@ class ActionMap extends Map {
     register (i) {
         return super.set(i.key, i.func);
     }
+    /**
+     * 
+     * @param {String} key
+     * @returns {undefined}
+     */
+    lookfor (key) {
+        return super.has(key) ? super.get(key).trigger() : false;
+    }
     
 }
 
@@ -41,10 +53,17 @@ class ActionMap extends Map {
  */
 export class InputHandler {
     constructor() {
-        window.addEventListener('keydown', this.listen);
+        // lambda necessaire pour garder le contexte de classe
+        window.addEventListener('keydown', (e) => this.listen(e), false);
+        this.actions = new ActionMap();
     }
-    
-    listen () {
-        
+    /**
+     * 
+     * @param {KeyboardEvent} event
+     * @returns {undefined}
+     */
+    listen (event) {
+        console.log(event.key);
+        this.actions.lookfor (event.key);
     }
 }
