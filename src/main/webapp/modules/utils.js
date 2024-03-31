@@ -34,3 +34,37 @@ export function makeGradient(c1, c2) {
 	gradient.addColorStop(1, c2);
 	return gradient;
 }
+/**
+ * 
+ * @param {CanvasContext} ctx
+ * @param {Color} color
+ * @param {float} x1
+ * @param {float} y1
+ * @param {float} x2
+ * @param {float} y2
+ * @param {float} x3
+ * @param {float} y3
+ * @returns {undefined}
+ */
+export function tri(ctx,color,x1,y1,x2,y2,x3,y3) {
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(x1,y1);
+    ctx.lineTo(x2, y2);
+    ctx.lineTo(x3, y3);
+    ctx.closePath();
+    ctx.fill();
+}
+
+export function circ(ctx, color, x, y, radius) {
+    ctx.fillStyle = color;
+    ctx.arc(x, y, radius, 0, 2*Math.PI);
+}
+
+export function clamp(n, a, b) {
+    let mi = Math.min(a, b);
+    let ma = Math.max(a, b);
+    if (n > ma) return ma;
+    if (n < mi) return mi;
+    return n;
+}

@@ -4,7 +4,7 @@
  */
 import { InputHandler } from "./modules/input_action.js";
 import { Vec2 } from "./modules/vec2.js";
-import {makeGradient} from "./modules/utils.js";
+import {makeGradient, tri} from "./modules/utils.js";
 import {Brick} from "./modules/Brick.js";
 import {Grid} from "./modules/Grid.js";
 import {Slider} from "./modules/Slider.js";
@@ -15,6 +15,7 @@ const canvasHeight = canvas.height;
 var gameGrid;
 var player;
 var inputHandler;
+var balls = [];
 
 function init() {
     inputHandler = new InputHandler();
@@ -24,10 +25,14 @@ function init() {
     player = new Slider(120, 330);
     player.center(true);
     player.color = makeGradient('#99c1f1', '#26a269');
+    let B = player.spawnBall();
+    balls.push(B);
+    console.log(B);
 }
 
 function update() {
-    // called 60 times per second
+    player.update();
+    balls.forEach((b) => b.update());
 }
 
 function draw() {
@@ -38,6 +43,7 @@ function draw() {
         ctx.clearRect(0, 0, 360, 360);
         gameGrid.render(ctx);
         player.render(ctx);
+        balls.forEach((b) => b.render(ctx));
     }
 
 }
