@@ -18,7 +18,7 @@ class CallableLoop {
      * @returns {Boolean}
      */
     start () {
-        if (this.id) {
+        if (!this.id) {
             this.id = setInterval(this.callback, 16);
         }
     }
