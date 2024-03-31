@@ -18,7 +18,9 @@ class CallableLoop {
      * @returns {Boolean}
      */
     start () {
-        return !this.id ? this.id = setInterval(this.callback, 16) : false;
+        if (this.id) {
+            this.id = setInterval(this.callback, 16);
+        }
     }
     /**
      * @description Stops the loop

@@ -6,6 +6,13 @@ import { InputHandler } from "./modules/input_action.js";
 import { Vec2 } from "./modules/vec2.js";
 import {makeGradient} from "./modules/utils.js";
 
+var canvas = document.getElementById("canvas");
+const canvasWidth = canvas.width;
+const canvasHeight = canvas.height;
+var gameGrid;
+var player;
+var inputHandler;
+
 class CanvasObject extends Vec2 {
     // Ajouter hidden ? destroyable ?
     constructor(x, y) {
@@ -83,12 +90,7 @@ class Grid extends CanvasObject {
 
 }
 
-var canvas = document.getElementById("canvas");
-const canvasWidth = canvas.width;
-const canvasHeight = canvas.height;
-var gameGrid;
-var player;
-var inputHandler;
+
 
 function init() {
     inputHandler = new InputHandler();
