@@ -1,4 +1,5 @@
 import {Vec2} from "./vec2.js";
+import {clamp} from "./utils.js";
 
 export class CanvasObject extends Vec2 {
     // Ajouter hidden ? destroyable ?
@@ -20,5 +21,15 @@ export class CanvasObject extends Vec2 {
             if (v)
                 this.y = canvasH / 2.0 - this.height / 2.0;
         }
+    }
+    
+    /**
+     * 
+     * @param {Vec2} vec
+     * @returns {undefined}
+     */
+    move(vec) {
+        this.x = clamp(this.x + vec.x*this.speed, 0, canvas.width-this.width);
+        this.y += vec.y*this.speed;
     }
 }

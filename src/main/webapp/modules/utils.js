@@ -26,10 +26,10 @@
  * @param {Color} c2
  * @returns {makeGradient.gradient}
  */
-export function makeGradient(c1, c2) {
+export function makeGradient(c1, c2, x1=0, y1=0, x2 = 300, y2 = 20) {
 	const canvas = document.getElementById("canvas");
 	const ctx = canvas.getContext("2d");
-	var gradient = ctx.createLinearGradient(0, 0, 300, -20);
+	var gradient = ctx.createLinearGradient(x1, y1, x2, y2);
 	gradient.addColorStop(0, c1);
 	gradient.addColorStop(1, c2);
 	return gradient;
@@ -59,6 +59,7 @@ export function tri(ctx,color,x1,y1,x2,y2,x3,y3) {
 export function circ(ctx, color, x, y, radius) {
     ctx.fillStyle = color;
     ctx.arc(x, y, radius, 0, 2*Math.PI);
+    ctx.fill();
 }
 
 export function clamp(n, a, b) {

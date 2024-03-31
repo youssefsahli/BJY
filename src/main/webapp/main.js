@@ -15,24 +15,23 @@ const canvasHeight = canvas.height;
 var gameGrid;
 var player;
 var inputHandler;
-var balls = [];
+var ball;
 
 function init() {
     inputHandler = new InputHandler();
     inputHandler.addAction("Left", "ArrowLeft", () => player.move(Vec2.LEFT));
     inputHandler.addAction("Right", "ArrowRight", () => player.move(Vec2.RIGHT));
+    inputHandler.addAction("Launch", " ", () => player.launch());
     gameGrid = new Grid();
     player = new Slider(120, 330);
     player.center(true);
     player.color = makeGradient('#99c1f1', '#26a269');
-    let B = player.spawnBall();
-    balls.push(B);
-    console.log(B);
+    ball = player.spawnBall();
 }
 
 function update() {
     player.update();
-    balls.forEach((b) => b.update());
+    ball.update();
 }
 
 function draw() {
@@ -43,7 +42,7 @@ function draw() {
         ctx.clearRect(0, 0, 360, 360);
         gameGrid.render(ctx);
         player.render(ctx);
-        balls.forEach((b) => b.render(ctx));
+        ball.render(ctx);
     }
 
 }

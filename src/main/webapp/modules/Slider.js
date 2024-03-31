@@ -17,7 +17,12 @@ export class Slider extends Brick {
     }
 
     update() {
-        // TODO Movement
+        if (this.ball && this.ball.fixed) {
+            let x = this.centerPoint.x;
+            let y = this.y + this.launcherHeight -10;
+            this.ball.x = x;
+            this.ball.y = y;
+        }
     }
 
     render(ctx) {
@@ -26,19 +31,19 @@ export class Slider extends Brick {
         tri(ctx, '#f66151', x, this.y + this.launcherHeight, x + 10,
                 this.y, x - 10, this.y);
     }
-    /**
-     * 
-     * @param {Vec2} vec
-     * @returns {undefined}
-     */
-    move(vec) {
-        this.x = clamp(this.x + vec.x*this.speed, 0, canvas.width-this.width);
-        this.y += vec.y*this.speed;
-    }
+    
     
     spawnBall() {
         let x = this.centerPoint.x;
         let y = this.y + this.launcherHeight;
-        return new Ball(x, y);
+        this.ball = new Ball(x, y-10);
+        return this.ball;
+    }
+    
+    launch () {
+        if (this.ball) {
+            this.ball.direction = Vec2.UP;
+            this.ball.fixed = false;
+        }
     }
 }
