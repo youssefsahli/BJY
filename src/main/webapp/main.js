@@ -2,9 +2,9 @@
  * Y. Sahli GPLv3
  * Main Canvas File
  */
-import { InputAction } from "./input_action.js";
-import { Vec2 } from "./vec2.js";
-import {makeGradient} from "./utils.js";
+import { InputAction } from "./modules/input_action.js";
+import { Vec2 } from "./modules/vec2.js";
+import {makeGradient} from "./modules/utils.js";
 
 class CanvasObject extends Vec2 {
 	// Ajouter hidden ? destroyable ?
