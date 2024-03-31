@@ -1,3 +1,9 @@
 body {
-  background-color: midnightblue;
+	background-color: midnightblue;
+}
+
+#canvas {
+	border: medium inset #f9f06b;
+	background: #ffffff;
+	position: absolute;
 }
