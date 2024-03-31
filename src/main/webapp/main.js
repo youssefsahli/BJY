@@ -3,13 +3,16 @@
  * Main Canvas File
  */
 function windowToCanvas(canvas, x, y) {
+	// Tu donnes les coordonnées pour la fenêtre → coordonnées du canvas.
+	// !! Non testé !!
+	// TODO Faire tests
 	var bbox = canvas.getBoundingClientRect();
 	return {
 		x: x - bbox.left * (canvas.width / bbox.width),
 		y: y - bbox.top * (canvas.height / bbox.height)
 	};
 }
-
+// Barebone vector class
 class Vec2 {
 	constructor(x, y) {
 		this.x = x;
@@ -42,12 +45,14 @@ class Vec2 {
 }
 
 class CanvasObject extends Vec2 {
+	// Ajouter hidden ? destroyable ?
 	constructor(x, y) {
 		super(x, y);
 	}
 }
 
 class Brick extends CanvasObject {
+	// TODO Differents types ?
 	width = 71;
 	height = 36;
 	padding = 5;
@@ -75,7 +80,7 @@ class Slider extends Brick {
 	}
 
 	update() {
-
+	// TODO Movement
 	}
 
 	render(ctx) {
@@ -129,11 +134,11 @@ function init() {
 }
 
 function update () {
-	
+	// called 60 times per second
 }
 
 function draw() {
-
+	// called 60 times per second
 	if (canvas.getContext) {
 		const ctx = canvas.getContext("2d");
 		// Clear context
