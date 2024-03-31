@@ -22,15 +22,13 @@ function draw() {
     const brickWidth = window.innerWidth / 25;
     const brickHeight = window.innerHeight / 25;
 
-    const nbColumns = Math.floor(
-      (canvas.width - canvas.width / 5) / brickWidth
-    );
-    const nbLines = Math.floor(
+    const cols = Math.floor((canvas.width - canvas.width / 5) / brickWidth);
+    const rows = Math.floor(
       (canvas.height - canvas.height / 1.5) / brickHeight
     );
 
-    for (let i = 0; i < nbLines; i++) {
-      for (let j = 0; j < nbColumns; j++) {
+    for (let i = 0; i < rows; i++) {
+      for (let j = 0; j < cols; j++) {
         const x = canvas.width / 10 + j * brickWidth;
         const y = canvas.height / 10 + i * brickHeight;
 
