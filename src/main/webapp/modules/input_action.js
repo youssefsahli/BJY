@@ -44,10 +44,9 @@ class InputAction {
      * @param {String} name
      * @param {String} key
      * @param {Callable} func
-     * @param {boolean} rep
      * @returns {InputAction}
      */
-    constructor(name, key, func, rep) {
+    constructor(name, key, func) {
         this.name = name;
         this.key = key;
         /**
@@ -61,6 +60,10 @@ class InputAction {
      */
     trigger() {
         return this.callback.start();
+    }
+    
+    triggerOnce() {
+        return this.callback.callback();
     }
 
     stop() {
