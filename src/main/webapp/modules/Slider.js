@@ -17,6 +17,7 @@ export class Slider extends Brick {
     }
 
     update() {
+        // Au départ la balle suit le slider
         if (this.ball && this.ball.fixed) {
             let x = this.centerPoint.x;
             let y = this.y + this.launcherHeight -10;
@@ -42,7 +43,7 @@ export class Slider extends Brick {
     
     launch () {
         if (this.ball) {
-            this.ball.direction = Vec2.UP;
+            this.ball.direction = Vec2.UP.noise(0.1);
             this.ball.fixed = false;
         }
     }

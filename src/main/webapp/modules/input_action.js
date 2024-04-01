@@ -17,7 +17,7 @@ class CallableLoop {
      * @description Starts the loop
      * @returns {Boolean}
      */
-    start () {
+    start() {
         if (!this.id) {
             this.id = setInterval(this.callback, 16);
         }
@@ -26,7 +26,7 @@ class CallableLoop {
      * @description Stops the loop
      * @returns {Boolean}
      */
-    stop () {
+    stop() {
         if (this.id) {
             clearInterval(this.id);
             this.id = null;
@@ -44,25 +44,26 @@ class InputAction {
      * @param {String} name
      * @param {String} key
      * @param {Callable} func
+     * @param {boolean} rep
      * @returns {InputAction}
      */
-    constructor(name, key, func) {
+    constructor(name, key, func, rep) {
         this.name = name;
         this.key = key;
         /**
          * @description When key pressed, execute async? func
          */
-        this.callback = new CallableLoop(func); 
+        this.callback = new CallableLoop(func);
     }
     /**
      * @description WARNING starts a looped callback
      * @returns {unresolved}
      */
-    trigger () {
+    trigger() {
         return this.callback.start();
     }
-    
-    stop () {
+
+    stop() {
         return this.callback.stop();
     }
 }
@@ -72,7 +73,7 @@ class InputAction {
  * @type ActionMap
  */
 class ActionMap extends Map {
-    constructor (kv) {
+    constructor(kv) {
         super(kv);
     }
     /**
@@ -80,8 +81,8 @@ class ActionMap extends Map {
      * @param {InputAction} i
      * @returns {ActionMap}
      */
-    register (i) {
-        
+    register(i) {
+
         return super.set(i.key, i);
     }
     /**
@@ -89,10 +90,10 @@ class ActionMap extends Map {
      * @param {String} key
      * @returns {undefined}
      */
-    lookfor (key) {
+    lookfor(key) {
         return super.has(key) ? super.get(key) : false;
     }
-    
+
 }
 
 
@@ -104,7 +105,7 @@ export class InputHandler {
     constructor() {
         // lambda necessaire pour garder le contexte de classe
         window.addEventListener('keydown', (e) => this.listen(e), false);
-        window.addEventListener('keyup',   (e) => this.listen(e), false);
+        window.addEventListener('keyup', (e) => this.listen(e), false);
         this.actions = new ActionMap();
     }
     /**
@@ -114,7 +115,7 @@ export class InputHandler {
      * @param {Callable} func
      * @returns {undefined}
      */
-    addAction (name, key, func) {
+    addAction(name, key, func) {
         let A = new InputAction(name, key, func);
         return this.actions.register(A);
     }
@@ -123,12 +124,14 @@ export class InputHandler {
      * @param {KeyboardEvent} event
      * @returns {undefined}
      */
-    listen (event) {
-        if (event.repeat) return; // We look for keyup to stop the callback
-        let A = this.actions.lookfor (event.key);
-        if (!A) return;
+    listen(event) {
+        if (event.repeat)
+            return; // We look for keyup to stop the callback
+        let A = this.actions.lookfor(event.key);
+        if (!A)
+            return;
         switch (event.type) {
-            case 'keyup' : 
+            case 'keyup':
                 A.stop();
                 break;
             case 'keydown':

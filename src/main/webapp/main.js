@@ -22,6 +22,7 @@ function init() {
     inputHandler.addAction("Left", "ArrowLeft", () => player.move(Vec2.LEFT));
     inputHandler.addAction("Right", "ArrowRight", () => player.move(Vec2.RIGHT));
     inputHandler.addAction("Launch", " ", () => player.launch());
+    inputHandler.addAction("Launch", " ", () => player.launch());
     gameGrid = new Grid();
     player = new Slider(120, 330);
     player.center(true);
