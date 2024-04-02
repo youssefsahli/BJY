@@ -8,6 +8,7 @@ import {makeGradient, tri} from "./modules/utils.js";
 import {Brick} from "./modules/Brick.js";
 import {Grid} from "./modules/Grid.js";
 import {Slider} from "./modules/Slider.js";
+import {CollisionService} from "./modules/CollisionService.js";
 
 var canvas = document.getElementById("canvas");
 const canvasWidth = canvas.width;
@@ -16,14 +17,15 @@ var gameGrid;
 var player;
 var inputHandler;
 var ball;
+var collisionService = new CollisionService();
 
 function init() {
     inputHandler = new InputHandler();
     inputHandler.addAction("Left", "ArrowLeft", () => player.move(Vec2.LEFT));
     inputHandler.addAction("Right", "ArrowRight", () => player.move(Vec2.RIGHT));
     inputHandler.addAction("Launch", " ", () => player.launch());
-    inputHandler.addAction("Launch", " ", () => player.launch());
     gameGrid = new Grid();
+    collisionService.registerArray(gameGrid.bricks);
     player = new Slider(120, 330);
     player.center(true);
     player.color = makeGradient('#99c1f1', '#26a269');
@@ -31,8 +33,8 @@ function init() {
 }
 
 function update() {
+    collisionService.update();
     player.update();
-    ball.update();
 }
 
 function draw() {
@@ -40,7 +42,7 @@ function draw() {
     if (canvas.getContext) {
         const ctx = canvas.getContext("2d");
         // Clear context
-        ctx.clearRect(0, 0, 360, 360);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
         gameGrid.render(ctx);
         player.render(ctx);
         ball.render(ctx);
