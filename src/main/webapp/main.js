@@ -4,6 +4,7 @@ let ctx = canvas.getContext("2d");
 // Initialisation des variables
 // Stocke l'ID de la frame d'animation pour pouvoir l'arrêter
 let animationFrameId;
+let score = 0;
 
 // Dimensions initiales et position de la balle
 let ballRadius = 10;
@@ -138,17 +139,21 @@ function movePaddle() {
 }
 
 function gameOver() {
-  // Option 1: Utiliser alert pour un message simple
-  // alert("Game Over! Appuyez sur OK pour recommencer.");
-
-  // Option 2: Dessiner un message sur le canvas
+  // Dessiner un message sur le canvas
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = "black";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.font = "30px Arial";
   ctx.fillStyle = "white";
   ctx.textAlign = "center";
+  ``;
+  ctx.fillText(
+    "Votre score est de " + score,
+    canvas.width / 2,
+    canvas.height / 2 - 40
+  );
   ctx.fillText("Game Over!", canvas.width / 2, canvas.height / 2);
+
   ctx.fillText(
     "Appuyez sur ESPACE pour recommencer",
     canvas.width / 2,
@@ -156,7 +161,6 @@ function gameOver() {
   );
 
   // Arrêter la boucle de jeu
-
   cancelAnimationFrame(animationFrameId);
 
   // Attendre l'action de l'utilisateur pour recommencer
@@ -192,6 +196,47 @@ function resetBallAndPaddle() {
 
   // Réinitialise la position de la raquette
   paddleX = (canvas.width - paddleWidth) / 2;
+}
+
+// Vérifie si le joueur a cassé toutes les briques
+function checkWinCondition() {
+  const remainingBricks = bricks.filter((brick) => brick.status === 1).length;
+
+  if (remainingBricks === 0) {
+    // Le joueur a gagné
+    winGame();
+  }
+}
+
+function winGame() {
+  // Dessiner un message sur le canvas
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "black";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.font = "30px Arial";
+  ctx.fillStyle = "white";
+  ctx.textAlign = "center";
+  ctx.fillText(
+    "Félicitations! Vous avez gagné!",
+    canvas.width / 2,
+    canvas.height / 2 - 40
+  );
+  ctx.fillText(
+    "Votre score est de " + score,
+    canvas.width / 2,
+    canvas.height / 2
+  );
+  ctx.fillText(
+    "Appuyez sur ESPACE pour recommencer",
+    canvas.width / 2,
+    canvas.height / 2 + 40
+  );
+
+  // Arrêter la boucle de jeu
+  cancelAnimationFrame(animationFrameId);
+
+  // Attendre l'action de l'utilisateur pour recommencer
+  document.addEventListener("keydown", restartGameListener);
 }
 
 // Met à jour le jeu
@@ -239,19 +284,8 @@ function update() {
           // ou de traiter le cas spécifiquement ici.
           speedY = -speedY; // Ceci est un choix par défaut; ajustez selon le comportement souhaité.
         }
-
+        score += 100;
         brick.status = 0; // La brique est "brisée"
-
-        // // Calcul de la distance au centre de la brique
-        // let distX = Math.abs(ballX - brick.x - brickWidth / 2);
-        // let distY = Math.abs(ballY - brick.y - brickHeight / 2);
-
-        // // Si la balle est plus proche du côté que du haut ou du bas, alors c'est une collision latérale
-        // if (distX > distY) {
-        //   speedX = -speedX; // Inverse la vitesse horizontale pour une collision latérale
-        // } else {
-        //   speedY = -speedY; // Inverse la vitesse verticale pour une collision supérieure ou inférieure
-        // }
       }
     }
   });
@@ -297,7 +331,7 @@ function update() {
     // Ajuster la position de la balle pour éviter qu'elle ne "colle" à la raquette
     ballY = paddleY - ballRadius - 1;
   }
-
+  checkWinCondition(); // Vérifier si le joueur a gagné
   animationFrameId = requestAnimationFrame(update);
 }
 
