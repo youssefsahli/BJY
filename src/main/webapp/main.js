@@ -1,6 +1,10 @@
 let canvas = document.getElementById("canvas");
 let ctx = canvas.getContext("2d");
 
+// Initialisation des variables
+// Stocke l'ID de la frame d'animation pour pouvoir l'arrêter
+let animationFrameId;
+
 // Dimensions initiales et position de la balle
 let ballRadius = 10;
 let ballX = canvas.width / 2;
@@ -10,7 +14,7 @@ let speedY = 0;
 let ballLaunched = false;
 
 // Nombre et dimensions des briques
-let cols = 12;
+let cols = 13;
 let rows = 6;
 let brickWidth, brickHeight; // Ajusté dans adjustCanvas
 const bricks = [];
@@ -49,7 +53,7 @@ function init() {
   for (let i = 0; i < rows; i++) {
     for (let j = 0; j < cols; j++) {
       let brick = {
-        x: canvas.width / 10 + j * brickWidth,
+        x: canvas.width / 15 + j * brickWidth,
         y: canvas.height / 10 + i * brickHeight,
         status: 1, // La brique est initialement visible
       };
@@ -133,6 +137,63 @@ function movePaddle() {
   }
 }
 
+function gameOver() {
+  // Option 1: Utiliser alert pour un message simple
+  // alert("Game Over! Appuyez sur OK pour recommencer.");
+
+  // Option 2: Dessiner un message sur le canvas
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "black";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.font = "30px Arial";
+  ctx.fillStyle = "white";
+  ctx.textAlign = "center";
+  ctx.fillText("Game Over!", canvas.width / 2, canvas.height / 2);
+  ctx.fillText(
+    "Appuyez sur ESPACE pour recommencer",
+    canvas.width / 2,
+    canvas.height / 2 + 40
+  );
+
+  // Arrêter la boucle de jeu
+
+  cancelAnimationFrame(animationFrameId);
+
+  // Attendre l'action de l'utilisateur pour recommencer
+  document.addEventListener("keydown", restartGameListener);
+}
+
+function restartGameListener(event) {
+  if (event.code === "Space") {
+    document.removeEventListener("keydown", restartGameListener);
+    restartGame();
+  }
+}
+
+function restartGame() {
+  // Réinitialiser les états de jeu
+  init();
+  resetBallAndPaddle();
+  console.log("speedY :>> ", speedY);
+  // Démarrer la boucle de jeu
+  animationFrameId = requestAnimationFrame(update);
+}
+
+function resetBallAndPaddle() {
+  // Réinitialise la position de la balle
+  ballX = canvas.width / 2;
+  ballY = canvas.height - 30;
+
+  // Réinitialise les vitesses de la balle
+  speedX = 0; // Ou une autre valeur initiale désirée
+  speedY = 0; // Assurez-vous de définir une valeur négative pour que la balle monte
+
+  ballLaunched = false;
+
+  // Réinitialise la position de la raquette
+  paddleX = (canvas.width - paddleWidth) / 2;
+}
+
 // Met à jour le jeu
 function update() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -151,16 +212,46 @@ function update() {
         ballY - ballRadius < brick.y + brickHeight &&
         ballY + ballRadius > brick.y
       ) {
-        brick.status = 0; // La brique est "brisée"
-        speedY = -speedY;
-        // Calcul de la distance au centre de la brique
-        let distX = Math.abs(ballX - brick.x - brickWidth / 2);
-        let distY = Math.abs(ballY - brick.y - brickHeight / 2);
+        // Détermine si la collision est verticale ou latérale
+        // en vérifiant la position précédente de la balle
+        let ballPreviousX = ballX - speedX;
+        let ballPreviousY = ballY - speedY;
 
-        // Si la balle est plus proche du côté que du haut ou du bas, alors c'est une collision latérale
-        if (distX > distY) {
-          speedX = -speedX; // Inverse la vitesse horizontale pour une collision latérale
+        // Collision verticale si la position précédente de la balle était à l'extérieur de la brique en Y
+        let verticalCollision =
+          ballPreviousY + ballRadius < brick.y ||
+          ballPreviousY - ballRadius > brick.y + brickHeight;
+        console.log("verticalCollision :>> ", verticalCollision);
+
+        // Collision latérale si la position précédente de la balle était à l'extérieur de la brique en X
+        let lateralCollision =
+          ballPreviousX + ballRadius + 1 < brick.x ||
+          ballPreviousX - ballRadius + 1 > brick.x + brickWidth;
+        console.log("lateralCollision :>> ", lateralCollision);
+
+        if (verticalCollision) {
+          speedY = -speedY;
+        } else if (lateralCollision) {
+          speedX = -speedX;
+        } else {
+          // Dans le cas où une collision est détectée mais ne correspond ni à une collision clairement verticale ni latérale,
+          // par exemple, lorsqu'elle se produit près des coins, on peut choisir de prioriser le rebond vertical
+          // ou de traiter le cas spécifiquement ici.
+          speedY = -speedY; // Ceci est un choix par défaut; ajustez selon le comportement souhaité.
         }
+
+        brick.status = 0; // La brique est "brisée"
+
+        // // Calcul de la distance au centre de la brique
+        // let distX = Math.abs(ballX - brick.x - brickWidth / 2);
+        // let distY = Math.abs(ballY - brick.y - brickHeight / 2);
+
+        // // Si la balle est plus proche du côté que du haut ou du bas, alors c'est une collision latérale
+        // if (distX > distY) {
+        //   speedX = -speedX; // Inverse la vitesse horizontale pour une collision latérale
+        // } else {
+        //   speedY = -speedY; // Inverse la vitesse verticale pour une collision supérieure ou inférieure
+        // }
       }
     }
   });
@@ -179,8 +270,11 @@ function update() {
   if (ballX < ballRadius || ballX > canvas.width - ballRadius) {
     speedX = -speedX;
   }
-  if (ballY < ballRadius || ballY > canvas.height - ballRadius) {
+  if (ballY < ballRadius) {
     speedY = -speedY;
+  } else if (ballY > canvas.height - ballRadius) {
+    // Si la balle sort par le bas
+    gameOver(); // Appelle la fonction gameOver
   }
 
   // Gestion de la collision avec la raquette
@@ -204,7 +298,7 @@ function update() {
     ballY = paddleY - ballRadius - 1;
   }
 
-  requestAnimationFrame(update);
+  animationFrameId = requestAnimationFrame(update);
 }
 
 init();
