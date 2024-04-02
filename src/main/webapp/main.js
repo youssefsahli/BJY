@@ -239,7 +239,7 @@ function winGame() {
   document.addEventListener("keydown", restartGameListener);
 }
 
-// Met à jour le jeu
+// Met à jour le jeu à chaque frame
 function update() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawBricks();
@@ -247,45 +247,36 @@ function update() {
   drawBall();
   movePaddle();
 
+  let collisionDetected = false; // S'assure qu'une seule collision est traitée à la fois
+
   // Gestion des collisions avec les briques
-  // Redessine les briques qui n'ont pas été touchées (status = 1)
-  bricks.forEach((brick) => {
-    if (brick.status === 1) {
+  bricks.forEach((brick, index) => {
+    if (!collisionDetected && brick.status === 1) {
       if (
         ballX - ballRadius < brick.x + brickWidth &&
         ballX + ballRadius > brick.x &&
         ballY - ballRadius < brick.y + brickHeight &&
         ballY + ballRadius > brick.y
       ) {
-        // Détermine si la collision est verticale ou latérale
-        // en vérifiant la position précédente de la balle
-        let ballPreviousX = ballX - speedX;
-        let ballPreviousY = ballY - speedY;
-
-        // Collision verticale si la position précédente de la balle était à l'extérieur de la brique en Y
         let verticalCollision =
-          ballPreviousY + ballRadius < brick.y ||
-          ballPreviousY - ballRadius > brick.y + brickHeight;
-        console.log("verticalCollision :>> ", verticalCollision);
-
-        // Collision latérale si la position précédente de la balle était à l'extérieur de la brique en X
+          ballY + ballRadius - speedY <= brick.y ||
+          ballY - ballRadius - speedY >= brick.y + brickHeight;
         let lateralCollision =
-          ballPreviousX + ballRadius + 1 < brick.x ||
-          ballPreviousX - ballRadius + 1 > brick.x + brickWidth;
-        console.log("lateralCollision :>> ", lateralCollision);
+          ballX + ballRadius - speedX <= brick.x ||
+          ballX - ballRadius - speedX >= brick.x + brickWidth;
 
         if (verticalCollision) {
           speedY = -speedY;
         } else if (lateralCollision) {
           speedX = -speedX;
         } else {
-          // Dans le cas où une collision est détectée mais ne correspond ni à une collision clairement verticale ni latérale,
-          // par exemple, lorsqu'elle se produit près des coins, on peut choisir de prioriser le rebond vertical
-          // ou de traiter le cas spécifiquement ici.
-          speedY = -speedY; // Ceci est un choix par défaut; ajustez selon le comportement souhaité.
+          // Prioriser le rebond vertical en cas d'ambiguïté près des coins
+          speedY = -speedY;
         }
-        score += 100;
+
+        score += 100; // à chaque brique cassée, le score augmente de 100
         brick.status = 0; // La brique est "brisée"
+        collisionDetected = true; // Empêche d'autres collisions pendant ce cycle
       }
     }
   });
@@ -307,8 +298,7 @@ function update() {
   if (ballY < ballRadius) {
     speedY = -speedY;
   } else if (ballY > canvas.height - ballRadius) {
-    // Si la balle sort par le bas
-    gameOver(); // Appelle la fonction gameOver
+    gameOver(); // Appelle la fonction gameOver si la balle touche le bas du canevas
   }
 
   // Gestion de la collision avec la raquette
@@ -318,21 +308,14 @@ function update() {
     ballY > paddleY - ballRadius &&
     ballY < paddleY + paddleHeight
   ) {
-    // Calculer le point d'impact sur la raquette
     let impactPoint = ballX - (paddleX + paddleWidth / 2);
-
-    // Modifier speedX en fonction de l'endroit où la balle touche la raquette
-    // Plus l'impact est éloigné du centre, plus le changement de direction est grand
-    speedX = (impactPoint / 2) * 0.1;
-
-    // Inverser la direction verticale
-    speedY = -speedY;
-
-    // Ajuster la position de la balle pour éviter qu'elle ne "colle" à la raquette
-    ballY = paddleY - ballRadius - 1;
+    speedX += (impactPoint / paddleWidth) * 2; // Ajuste la vitesse horizontale basée sur le point d'impact
+    speedY = -speedY; // Inverse la direction verticale
+    ballY = paddleY - ballRadius - 1; // Ajuste la position de la balle pour éviter qu'elle ne "colle"
   }
-  checkWinCondition(); // Vérifier si le joueur a gagné
-  animationFrameId = requestAnimationFrame(update);
+
+  checkWinCondition(); // Vérifie si le joueur a gagné
+  animationFrameId = requestAnimationFrame(update); // Appelle la fonction update à chaque frame et stocke l'ID de la frame pour pouvoir l'arrêter
 }
 
 init();
