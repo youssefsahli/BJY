@@ -8,10 +8,11 @@ import { Rect } from "./Rect.js";
  * @field {Callable} onCollision;
  */
 export class PhysicEntity extends Rect {
-    speed = 1;
     direction = new Vec2();
-    onCollision = () => {};
-    constructor(x, y, w, h, speed) {
+    onCollision = () => {
+    }
+    ;
+            constructor(x, y, w, h, speed = 1) {
         super(x, y, w, h);
         this.speed = speed;
     }
@@ -63,7 +64,7 @@ export class CollisionService {
     register(pe) {
         this.objects.push(pe);
     }
-    
+
     /**
      * 
      * @param {Array} arr
@@ -83,7 +84,7 @@ export class CollisionService {
             let collider = this.checkCollisions(element);
             if (!collider) {
                 element.move(element.direction.times(element.speed));
-            } else 
+            } else
             if (collider.normal) {
                 element.direction = element.direction.bounce(collider.normal);
             }

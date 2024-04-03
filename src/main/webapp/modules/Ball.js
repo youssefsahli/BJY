@@ -1,36 +1,17 @@
 import { CanvasObject } from "./CanvasObject.js";
 import {circ, makeGradient} from "./utils.js";
 import {Vec2} from "./vec2.js";
+import {PhysicEntity} from "./CollisionService.js";
 
-export class Ball extends CanvasObject {
+export class Ball extends PhysicEntity {
+    type="Ball";
     radius = 10;
     color = makeGradient('#dc8add', '#613583');
     fixed = true;
-    direction = Vec2.ZERO;
     speed = 2;
-    constructor(x, y) {
-        super(x, y);
-    }
-    
-    collide (v) {
-        this.direction = this.direction.bounce(v);
-    }
-
-    update() {
-        super.move(this.direction.times(this.speed));
-        if (this.x >= canvas.width - this.radius) {
-            this.collide(Vec2.LEFT);
-        } else
-        if (this.x <= this.radius) {
-            this.collide(Vec2.RIGHT);
-        } else
-        if (this.y >= canvas.height - this.radius) {
-            this.collide(Vec2.DOWN);
-        } else
-        if (this.y <= this.radius) {
-            this.collide(Vec2.UP);
-        }
-
+    constructor(x, y, speed) {
+        super(x, y, 10,10, speed);
+        this.direction = Vec2.UP;
     }
 
     render(ctx) {
