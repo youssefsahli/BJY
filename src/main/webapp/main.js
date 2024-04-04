@@ -5,6 +5,21 @@ let ctx = canvas.getContext("2d");
 // Stocke l'ID de la frame d'animation pour pouvoir l'arrêter
 let animationFrameId;
 let score = 0;
+let lives = 3;
+let scoreHistory = [];
+
+// Affiche le score et le nombre de vies
+function drawScore() {
+  ctx.font = "24px Arial";
+  ctx.fillStyle = "white";
+  ctx.fillText("Score: " + score, 30, 40);
+}
+
+function drawLives() {
+  ctx.font = "24px Arial";
+  ctx.fillStyle = "white";
+  ctx.fillText("Vies: " + lives, canvas.width - 95, 40);
+}
 
 // Dimensions initiales et position de la balle
 let ballRadius = 10;
@@ -50,6 +65,9 @@ adjustCanvas();
 
 // Initialisation des briques
 function init() {
+  score = 0;
+  speedX = 0;
+  speedY = 0;
   bricks.length = 0; // Efface le tableau existant
   for (let i = 0; i < rows; i++) {
     for (let j = 0; j < cols; j++) {
@@ -239,15 +257,16 @@ function winGame() {
   document.addEventListener("keydown", restartGameListener);
 }
 
-// Met à jour le jeu à chaque frame
 function update() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawBricks();
   drawPaddle();
   drawBall();
   movePaddle();
+  drawScore();
+  drawLives();
 
-  let collisionDetected = false; // S'assure qu'une seule collision est traitée à la fois
+  let collisionDetected = false; // S'assure qu'une seule collision est traitée par cycle
 
   // Gestion des collisions avec les briques
   bricks.forEach((brick, index) => {
@@ -274,7 +293,7 @@ function update() {
           speedY = -speedY;
         }
 
-        score += 100; // à chaque brique cassée, le score augmente de 100
+        score += 100; // Suppose que `score` est défini ailleurs dans votre code
         brick.status = 0; // La brique est "brisée"
         collisionDetected = true; // Empêche d'autres collisions pendant ce cycle
       }
@@ -291,6 +310,40 @@ function update() {
     ballY += speedY;
   }
 
+  //  Gestion de la collision avec la raquette
+  if (
+    ballX > paddleX &&
+    ballX < paddleX + paddleWidth &&
+    ballY > paddleY - ballRadius &&
+    ballY < paddleY + paddleHeight
+  ) {
+    //  Calculer le point d'impact sur la raquette
+    let impactPoint = ballX - (paddleX + paddleWidth / 2);
+
+    //  Modifier speedX en fonction de l'endroit où la balle touche la raquette
+    //  Plus l'impact est éloigné du centre, plus le changement de direction est grand
+    speedX = (impactPoint / 2) * 0.1;
+
+    //  Inverser la direction verticale
+    speedY = -speedY;
+
+    //  Ajuster la position de la balle pour éviter qu'elle ne "colle" à la raquette
+    ballY = paddleY - ballRadius - 1;
+  }
+
+  // // Alernative de la gestion de la collision avec la raquette
+  // if (
+  //   ballX > paddleX &&
+  //   ballX < paddleX + paddleWidth &&
+  //   ballY > paddleY - ballRadius &&
+  //   ballY < paddleY + paddleHeight
+  // ) {
+  //   let impactPoint = ballX - (paddleX + paddleWidth / 2);
+  //   speedX += (impactPoint / paddleWidth) * 2; // Ajuste la vitesse horizontale basée sur le point d'impact
+  //   speedY = -speedY; // Inverse la direction verticale
+  //   ballY = paddleY - ballRadius - 1; // Ajuste la position de la balle pour éviter qu'elle ne "colle"
+  // }
+
   // Gestion des collisions avec les bords du canevas
   if (ballX < ballRadius || ballX > canvas.width - ballRadius) {
     speedX = -speedX;
@@ -298,24 +351,15 @@ function update() {
   if (ballY < ballRadius) {
     speedY = -speedY;
   } else if (ballY > canvas.height - ballRadius) {
-    gameOver(); // Appelle la fonction gameOver si la balle touche le bas du canevas
+    if (lives > 0) {
+      lives--;
+      resetBallAndPaddle();
+    } else {
+      gameOver();
+    }
   }
-
-  // Gestion de la collision avec la raquette
-  if (
-    ballX > paddleX &&
-    ballX < paddleX + paddleWidth &&
-    ballY > paddleY - ballRadius &&
-    ballY < paddleY + paddleHeight
-  ) {
-    let impactPoint = ballX - (paddleX + paddleWidth / 2);
-    speedX += (impactPoint / paddleWidth) * 2; // Ajuste la vitesse horizontale basée sur le point d'impact
-    speedY = -speedY; // Inverse la direction verticale
-    ballY = paddleY - ballRadius - 1; // Ajuste la position de la balle pour éviter qu'elle ne "colle"
-  }
-
   checkWinCondition(); // Vérifie si le joueur a gagné
-  animationFrameId = requestAnimationFrame(update); // Appelle la fonction update à chaque frame et stocke l'ID de la frame pour pouvoir l'arrêter
+  animationFrameId = requestAnimationFrame(update); // Continue la boucle de jeu
 }
 
 init();
