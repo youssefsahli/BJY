@@ -1,19 +1,20 @@
-import {Brick} from "./Brick.js";
 import {Ball} from "./Ball.js";
 import {Vec2} from "./vec2.js";
 import {tri, clamp} from "./utils.js";
+import {PhysicEntity} from "./PhysicEntity.js";
 
-export class Slider extends Brick {
+export class Slider extends PhysicEntity {
     get centerPoint() {
-        return new Vec2(this.x + this.width / 2.0, this.y);
+        return new Vec2(this.x + this.w / 2.0, this.y);
     }
 
     launcherHeight = -5;
     constructor(x, y) {
-        super(x, y);
+        super(x, y, 71, 10);
         this.padding = 0;
-        this.height = 10;
+        this.h = 10;
         this.speed = 9;
+        this.isStatic = false;
     }
 
     update() {
@@ -37,7 +38,7 @@ export class Slider extends Brick {
     spawnBall() {
         let x = this.centerPoint.x;
         let y = this.y + this.launcherHeight;
-        this.ball = new Ball(x, y-10);
+        this.ball = new Ball(x, y-10, 2);
         return this.ball;
     }
     

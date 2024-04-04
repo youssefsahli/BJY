@@ -11,6 +11,10 @@ export class Vec2 {
     static RIGHT = new Vec2(1, 0)
     static UP = new Vec2(0, -1)
     static DOWN = new Vec2(0, 1)
+    
+    eq (v) {
+        return v.x === this.x && v.y === this.y;
+    }
 
     times(n) {
         return new Vec2(this.x * n, this.y * n);
