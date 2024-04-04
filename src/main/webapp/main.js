@@ -24,21 +24,25 @@ function drawLives() {
 
 // Dimensions initiales et position de la balle
 let ballRadius = 10;
+let ballColor = "white";
 let ballX = canvas.width / 2;
 let ballY = canvas.height - 30;
 let speedX = 0;
 let speedY = 0;
 let ballLaunched = false;
+let isPerforating = false;
 
 // Nombre et dimensions des briques
 let cols = 13;
 let rows = 6;
 let brickWidth, brickHeight; // Ajusté dans adjustCanvas
+let brickColor = "darkred";
 const bricks = [];
 
 // Dimensions et position initiales de la raquette
-let paddleWidth = window.innerWidth / 10;
+let paddleWidth = canvas.innerWidth / 11;
 let paddleHeight = 20;
+let paddleColor = "darksalmon";
 let paddleX = (canvas.width - paddleWidth) / 2;
 let paddleY = canvas.height - paddleHeight - 10;
 
@@ -72,13 +76,21 @@ function init() {
   score = 0;
   speedX = 0;
   speedY = 0;
+  index = 0;
   bricks.length = 0; // Efface le tableau existant
   for (let i = 0; i < rows; i++) {
     for (let j = 0; j < cols; j++) {
+      index++;
       let brick = {
         x: canvas.width / 15 + j * brickWidth,
         y: canvas.height / 10 + i * brickHeight,
         status: 1, // La brique est initialement visible
+        color:
+          index % 17 === 0
+            ? "lightgreen"
+            : index % 9 === 0
+            ? "darksalmon"
+            : brickColor,
       };
       bricks.push(brick);
     }
@@ -89,7 +101,7 @@ function init() {
 function drawBricks() {
   bricks.forEach((brick) => {
     if (brick.status === 1) {
-      ctx.fillStyle = brick.y % 2 === 0 ? "darkgreen" : "darkred";
+      ctx.fillStyle = brick.color;
       ctx.fillRect(brick.x, brick.y, brickWidth, brickHeight);
       ctx.strokeRect(brick.x, brick.y, brickWidth, brickHeight);
     }
@@ -98,7 +110,7 @@ function drawBricks() {
 
 // Dessine la raquette
 function drawPaddle() {
-  ctx.fillStyle = "darksalmon";
+  ctx.fillStyle = paddleColor;
   ctx.fillRect(paddleX, paddleY, paddleWidth, paddleHeight);
 }
 
@@ -106,7 +118,7 @@ function drawPaddle() {
 function drawBall() {
   ctx.beginPath();
   ctx.arc(ballX, ballY - 1, ballRadius, 0, Math.PI * 2);
-  ctx.fillStyle = "white";
+  ctx.fillStyle = ballColor;
   ctx.fill();
 }
 
@@ -318,6 +330,39 @@ function checkWinCondition() {
   }
 }
 
+// Bonus : Taille de la raquette doublée temporairement
+function doublePaddle() {
+  paddleWidth = canvas.width / 5.5;
+  setTimeout(() => {
+    paddleColor = "darkorange";
+  }, 6000);
+  setTimeout(() => {
+    paddleColor = "darkred";
+  }, 8000);
+  setTimeout(() => {
+    paddleColor = "darksalmon";
+  }, 10000);
+  setTimeout(() => {
+    paddleWidth = canvas.width / 11;
+  }, 11000);
+}
+
+// Bonus : Balle perforfante
+function perforatingBall() {
+  isPerforating = true;
+  ballColor = "lightgreen";
+  ballRadius = 15;
+
+  setTimeout(() => {
+    ballColor = "red";
+  }, 5000);
+  setTimeout(() => {
+    isPerforating = false;
+    ballColor = "white";
+    ballRadius = 10;
+  }, 7000);
+}
+
 function update() {
   if (!isGameOver) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -333,6 +378,7 @@ function update() {
     let collisionDetected = false; // S'assure qu'une seule collision est traitée par cycle
 
     // Gestion des collisions avec les briques
+
     bricks.forEach((brick, index) => {
       if (!collisionDetected && brick.status === 1) {
         if (
@@ -347,16 +393,21 @@ function update() {
           let lateralCollision =
             ballX + ballRadius - speedX <= brick.x ||
             ballX - ballRadius - speedX >= brick.x + brickWidth;
-
-          if (verticalCollision) {
-            speedY = -speedY;
-          } else if (lateralCollision) {
-            speedX = -speedX;
-          } else {
-            // Prioriser le rebond vertical en cas d'ambiguïté près des coins
-            speedY = -speedY;
+          if (!isPerforating) {
+            if (verticalCollision) {
+              speedY = -speedY;
+            } else if (lateralCollision) {
+              speedX = -speedX;
+            } else {
+              // Prioriser le rebond vertical en cas d'ambiguïté près des coins
+              speedY = -speedY;
+            }
           }
-
+          if (brick.color === "lightgreen") {
+            perforatingBall();
+          } else if (brick.color === "darksalmon") {
+            doublePaddle();
+          }
           score += 100; // Suppose que `score` est défini ailleurs dans votre code
           brick.status = 0; // La brique est "brisée"
           collisionDetected = true; // Empêche d'autres collisions pendant ce cycle
@@ -374,33 +425,29 @@ function update() {
       ballY += speedY;
     }
 
-    //  Gestion de la collision avec la raquette
     if (
-      ballX > paddleX &&
-      ballX < paddleX + paddleWidth &&
-      ballY > paddleY - ballRadius &&
-      ballY < paddleY + paddleHeight
+      ballX + ballRadius > paddleX &&
+      ballX - ballRadius < paddleX + paddleWidth &&
+      ballY + ballRadius > paddleY &&
+      ballY - ballRadius < paddleY + paddleHeight
     ) {
+      speedY = -Math.abs(speedY); // S'assure que la balle rebondit toujours vers le haut
+      ballY = paddleY - ballRadius - 1; // Ajuste la position de la balle pour éviter qu'elle "colle" à la raquette
+
       //  Calculer le point d'impact sur la raquette
       let impactPoint = ballX - (paddleX + paddleWidth / 2);
 
       //  Modifier speedX en fonction de l'endroit où la balle touche la raquette
       //  Plus l'impact est éloigné du centre, plus le changement de direction est grand
       speedX = (impactPoint / 2) * 0.1;
-
-      //  Inverser la direction verticale
-      speedY = -speedY;
-
-      //  Ajuster la position de la balle pour éviter qu'elle ne "colle" à la raquette
-      ballY = paddleY - ballRadius - 1;
     }
 
     // // Alernative de la gestion de la collision avec la raquette
     // if (
-    //   ballX > paddleX &&
-    //   ballX < paddleX + paddleWidth &&
-    //   ballY > paddleY - ballRadius &&
-    //   ballY < paddleY + paddleHeight
+    //   ballX + ballRadius > paddleX &&
+    //   ballX - ballRadius < paddleX + paddleWidth &&
+    //   ballY + ballRadius > paddleY - ballRadius &&
+    //   ballY - ballRadius < paddleY + paddleHeight
     // ) {
     //   let impactPoint = ballX - (paddleX + paddleWidth / 2);
     //   speedX += (impactPoint / paddleWidth) * 2; // Ajuste la vitesse horizontale basée sur le point d'impact
@@ -415,6 +462,7 @@ function update() {
     if (ballY < ballRadius) {
       speedY = -speedY;
     } else if (ballY > canvas.height - ballRadius) {
+      // Si la balle n'est pas perforante et sort du canvas par le bas
       if (lives > 0) {
         lives--;
         resetBallAndPaddle();
@@ -422,6 +470,7 @@ function update() {
         gameOver();
       }
     }
+
     checkWinCondition(); // Vérifie si le joueur a gagné
     animationFrameId = requestAnimationFrame(update); // Continue la boucle de jeu
   }
