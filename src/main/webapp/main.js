@@ -4,8 +4,9 @@ let ctx = canvas.getContext("2d");
 // Initialisation des variables
 // Stocke l'ID de la frame d'animation pour pouvoir l'arrêter
 let animationFrameId;
+let isGameOver = false;
 let score = 0;
-let lives = 3;
+let lives = 0;
 let scoreHistory = [];
 
 // Affiche le score et le nombre de vies
@@ -65,6 +66,9 @@ adjustCanvas();
 
 // Initialisation des briques
 function init() {
+  isGameOver = false;
+  score = 0;
+  lives = 3;
   score = 0;
   speedX = 0;
   speedY = 0;
@@ -114,27 +118,58 @@ function launchBall(event) {
     if (rightPressed) {
       speedX = 3;
     } else if (leftPressed) {
-      speedX = -3;
-    } // Vitesse initiale en X
+      speedX = -3; // Vitesse initiale en X
+    }
     speedY = -5; // Vitesse initiale en Y
   }
 }
 document.addEventListener("keydown", launchBall);
 
-// Gestion des touches fléchées
+// Accélère la balle en appuyant sur la touche "Shift"
+function speedUp(event) {
+  if (!isGameOver) {
+    let speedLimit = 10;
+    if (event.code === "Space" && ballLaunched && speedY < speedLimit) {
+      if (speedY > 0 && speedY < speedLimit) {
+        speedY = speedY + 5;
+      }
+      if (speedY < 0 && speedY > -speedLimit) {
+        speedY = speedY - 5;
+      }
+    }
+  }
+}
+function speedDown(event) {
+  if (event.code === "Space" && ballLaunched) {
+    if (speedY > 0) {
+      speedY = speedY / 2;
+    }
+    if (speedY < 0) {
+      speedY = speedY / 2;
+    }
+  }
+}
+document.addEventListener("keydown", speedUp);
+document.addEventListener("keyup", speedDown);
+
+// Gestion des touches fléchées pour déplacer la raquette
 function keyDownHandler(event) {
-  if (event.code === "ArrowLeft") {
-    leftPressed = true;
-  } else if (event.code === "ArrowRight") {
-    rightPressed = true;
+  if (!isGameOver) {
+    if (event.code === "ArrowLeft") {
+      leftPressed = true;
+    } else if (event.code === "ArrowRight") {
+      rightPressed = true;
+    }
   }
 }
 
 function keyUpHandler(event) {
-  if (event.code === "ArrowLeft") {
-    leftPressed = false;
-  } else if (event.code === "ArrowRight") {
-    rightPressed = false;
+  if (!isGameOver) {
+    if (event.code === "ArrowLeft") {
+      leftPressed = false;
+    } else if (event.code === "ArrowRight") {
+      rightPressed = false;
+    }
   }
 }
 
@@ -157,14 +192,26 @@ function movePaddle() {
 }
 
 function gameOver() {
+  if (isGameOver) return;
+  isGameOver = true; // Marque le jeu comme terminé
   // Dessiner un message sur le canvas
+  scoreHistory.push(score);
+  scoreHistory = scoreHistory.sort((a, b) => b - a).slice(0, 5);
+
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = "black";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.font = "30px Arial";
   ctx.fillStyle = "white";
   ctx.textAlign = "center";
-  ``;
+  ctx.fillText("Meilleurs scores :", canvas.width / 2, canvas.height / 5);
+  scoreHistory.map((score, index) => {
+    ctx.fillText(
+      index + 1 + ". " + score,
+      canvas.width / 2,
+      canvas.height / 5 + 40 * (index + 1)
+    );
+  });
   ctx.fillText(
     "Votre score est de " + score,
     canvas.width / 2,
@@ -173,7 +220,7 @@ function gameOver() {
   ctx.fillText("Game Over!", canvas.width / 2, canvas.height / 2);
 
   ctx.fillText(
-    "Appuyez sur ESPACE pour recommencer",
+    "Appuyez sur Entrée pour recommencer",
     canvas.width / 2,
     canvas.height / 2 + 40
   );
@@ -185,18 +232,63 @@ function gameOver() {
   document.addEventListener("keydown", restartGameListener);
 }
 
+// Redémarrer le jeu en appuyant sur "Entrée"
 function restartGameListener(event) {
-  if (event.code === "Space") {
+  if (event.code === "Enter") {
     document.removeEventListener("keydown", restartGameListener);
     restartGame();
   }
+}
+
+function winGame() {
+  if (isGameOver) return;
+  isGameOver = true; // Marque le jeu comme terminé
+  // Dessiner un message sur le canvas
+  scoreHistory.push(score);
+  scoreHistory = scoreHistory.sort((a, b) => b - a).slice(0, 5);
+
+  // Dessiner un message sur le canvas
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "black";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.font = "30px Arial";
+  ctx.fillStyle = "white";
+  ctx.textAlign = "center";
+  ctx.fillText("Meilleurs scores :", canvas.width / 2, canvas.height / 5);
+  scoreHistory.map((score, index) => {
+    ctx.fillText(
+      index + 1 + ". " + score,
+      canvas.width / 2,
+      canvas.height / 5 + 40 * (index + 1)
+    );
+  });
+  ctx.fillText(
+    "Félicitations! Vous avez gagné!",
+    canvas.width / 2,
+    canvas.height / 2 - 40
+  );
+  ctx.fillText(
+    "Votre score est de " + score,
+    canvas.width / 2,
+    canvas.height / 2
+  );
+  ctx.fillText(
+    "Appuyez sur Entrée pour recommencer",
+    canvas.width / 2,
+    canvas.height / 2 + 40
+  );
+
+  // Arrêter la boucle de jeu
+  cancelAnimationFrame(animationFrameId);
+
+  // Attendre l'action de l'utilisateur pour recommencer
+  document.addEventListener("keydown", restartGameListener);
 }
 
 function restartGame() {
   // Réinitialiser les états de jeu
   init();
   resetBallAndPaddle();
-  console.log("speedY :>> ", speedY);
   // Démarrer la boucle de jeu
   animationFrameId = requestAnimationFrame(update);
 }
@@ -226,140 +318,113 @@ function checkWinCondition() {
   }
 }
 
-function winGame() {
-  // Dessiner un message sur le canvas
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = "black";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.font = "30px Arial";
-  ctx.fillStyle = "white";
-  ctx.textAlign = "center";
-  ctx.fillText(
-    "Félicitations! Vous avez gagné!",
-    canvas.width / 2,
-    canvas.height / 2 - 40
-  );
-  ctx.fillText(
-    "Votre score est de " + score,
-    canvas.width / 2,
-    canvas.height / 2
-  );
-  ctx.fillText(
-    "Appuyez sur ESPACE pour recommencer",
-    canvas.width / 2,
-    canvas.height / 2 + 40
-  );
-
-  // Arrêter la boucle de jeu
-  cancelAnimationFrame(animationFrameId);
-
-  // Attendre l'action de l'utilisateur pour recommencer
-  document.addEventListener("keydown", restartGameListener);
-}
-
 function update() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  drawBricks();
-  drawPaddle();
-  drawBall();
-  movePaddle();
-  drawScore();
-  drawLives();
+  if (!isGameOver) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawBricks();
+    drawPaddle();
+    drawBall();
+    movePaddle();
+    drawScore();
+    drawLives();
+    // console.log("speedY :>> ", speedY);
+    // console.log("speedX :>> ", speedX);
 
-  let collisionDetected = false; // S'assure qu'une seule collision est traitée par cycle
+    let collisionDetected = false; // S'assure qu'une seule collision est traitée par cycle
 
-  // Gestion des collisions avec les briques
-  bricks.forEach((brick, index) => {
-    if (!collisionDetected && brick.status === 1) {
-      if (
-        ballX - ballRadius < brick.x + brickWidth &&
-        ballX + ballRadius > brick.x &&
-        ballY - ballRadius < brick.y + brickHeight &&
-        ballY + ballRadius > brick.y
-      ) {
-        let verticalCollision =
-          ballY + ballRadius - speedY <= brick.y ||
-          ballY - ballRadius - speedY >= brick.y + brickHeight;
-        let lateralCollision =
-          ballX + ballRadius - speedX <= brick.x ||
-          ballX - ballRadius - speedX >= brick.x + brickWidth;
+    // Gestion des collisions avec les briques
+    bricks.forEach((brick, index) => {
+      if (!collisionDetected && brick.status === 1) {
+        if (
+          ballX - ballRadius < brick.x + brickWidth &&
+          ballX + ballRadius > brick.x &&
+          ballY - ballRadius < brick.y + brickHeight &&
+          ballY + ballRadius > brick.y
+        ) {
+          let verticalCollision =
+            ballY + ballRadius - speedY <= brick.y ||
+            ballY - ballRadius - speedY >= brick.y + brickHeight;
+          let lateralCollision =
+            ballX + ballRadius - speedX <= brick.x ||
+            ballX - ballRadius - speedX >= brick.x + brickWidth;
 
-        if (verticalCollision) {
-          speedY = -speedY;
-        } else if (lateralCollision) {
-          speedX = -speedX;
-        } else {
-          // Prioriser le rebond vertical en cas d'ambiguïté près des coins
-          speedY = -speedY;
+          if (verticalCollision) {
+            speedY = -speedY;
+          } else if (lateralCollision) {
+            speedX = -speedX;
+          } else {
+            // Prioriser le rebond vertical en cas d'ambiguïté près des coins
+            speedY = -speedY;
+          }
+
+          score += 100; // Suppose que `score` est défini ailleurs dans votre code
+          brick.status = 0; // La brique est "brisée"
+          collisionDetected = true; // Empêche d'autres collisions pendant ce cycle
         }
+      }
+    });
 
-        score += 100; // Suppose que `score` est défini ailleurs dans votre code
-        brick.status = 0; // La brique est "brisée"
-        collisionDetected = true; // Empêche d'autres collisions pendant ce cycle
+    // Si la balle n'est pas lancée, elle suit la raquette
+    if (!ballLaunched) {
+      ballX = paddleX + paddleWidth / 2; // Centre la balle sur la raquette
+      ballY = paddleY - ballRadius - 1; // Positionne la balle juste au-dessus de la raquette
+    } else {
+      // Mise à jour de la position de la balle
+      ballX += speedX;
+      ballY += speedY;
+    }
+
+    //  Gestion de la collision avec la raquette
+    if (
+      ballX > paddleX &&
+      ballX < paddleX + paddleWidth &&
+      ballY > paddleY - ballRadius &&
+      ballY < paddleY + paddleHeight
+    ) {
+      //  Calculer le point d'impact sur la raquette
+      let impactPoint = ballX - (paddleX + paddleWidth / 2);
+
+      //  Modifier speedX en fonction de l'endroit où la balle touche la raquette
+      //  Plus l'impact est éloigné du centre, plus le changement de direction est grand
+      speedX = (impactPoint / 2) * 0.1;
+
+      //  Inverser la direction verticale
+      speedY = -speedY;
+
+      //  Ajuster la position de la balle pour éviter qu'elle ne "colle" à la raquette
+      ballY = paddleY - ballRadius - 1;
+    }
+
+    // // Alernative de la gestion de la collision avec la raquette
+    // if (
+    //   ballX > paddleX &&
+    //   ballX < paddleX + paddleWidth &&
+    //   ballY > paddleY - ballRadius &&
+    //   ballY < paddleY + paddleHeight
+    // ) {
+    //   let impactPoint = ballX - (paddleX + paddleWidth / 2);
+    //   speedX += (impactPoint / paddleWidth) * 2; // Ajuste la vitesse horizontale basée sur le point d'impact
+    //   speedY = -speedY; // Inverse la direction verticale
+    //   ballY = paddleY - ballRadius - 1; // Ajuste la position de la balle pour éviter qu'elle ne "colle"
+    // }
+
+    // Gestion des collisions avec les bords du canevas
+    if (ballX < ballRadius || ballX > canvas.width - ballRadius) {
+      speedX = -speedX;
+    }
+    if (ballY < ballRadius) {
+      speedY = -speedY;
+    } else if (ballY > canvas.height - ballRadius) {
+      if (lives > 0) {
+        lives--;
+        resetBallAndPaddle();
+      } else {
+        gameOver();
       }
     }
-  });
-
-  // Si la balle n'est pas lancée, elle suit la raquette
-  if (!ballLaunched) {
-    ballX = paddleX + paddleWidth / 2; // Centre la balle sur la raquette
-    ballY = paddleY - ballRadius - 1; // Positionne la balle juste au-dessus de la raquette
-  } else {
-    // Mise à jour de la position de la balle
-    ballX += speedX;
-    ballY += speedY;
+    checkWinCondition(); // Vérifie si le joueur a gagné
+    animationFrameId = requestAnimationFrame(update); // Continue la boucle de jeu
   }
-
-  //  Gestion de la collision avec la raquette
-  if (
-    ballX > paddleX &&
-    ballX < paddleX + paddleWidth &&
-    ballY > paddleY - ballRadius &&
-    ballY < paddleY + paddleHeight
-  ) {
-    //  Calculer le point d'impact sur la raquette
-    let impactPoint = ballX - (paddleX + paddleWidth / 2);
-
-    //  Modifier speedX en fonction de l'endroit où la balle touche la raquette
-    //  Plus l'impact est éloigné du centre, plus le changement de direction est grand
-    speedX = (impactPoint / 2) * 0.1;
-
-    //  Inverser la direction verticale
-    speedY = -speedY;
-
-    //  Ajuster la position de la balle pour éviter qu'elle ne "colle" à la raquette
-    ballY = paddleY - ballRadius - 1;
-  }
-
-  // // Alernative de la gestion de la collision avec la raquette
-  // if (
-  //   ballX > paddleX &&
-  //   ballX < paddleX + paddleWidth &&
-  //   ballY > paddleY - ballRadius &&
-  //   ballY < paddleY + paddleHeight
-  // ) {
-  //   let impactPoint = ballX - (paddleX + paddleWidth / 2);
-  //   speedX += (impactPoint / paddleWidth) * 2; // Ajuste la vitesse horizontale basée sur le point d'impact
-  //   speedY = -speedY; // Inverse la direction verticale
-  //   ballY = paddleY - ballRadius - 1; // Ajuste la position de la balle pour éviter qu'elle ne "colle"
-  // }
-
-  // Gestion des collisions avec les bords du canevas
-  if (ballX < ballRadius || ballX > canvas.width - ballRadius) {
-    speedX = -speedX;
-  }
-  if (ballY < ballRadius) {
-    speedY = -speedY;
-  } else if (ballY > canvas.height - ballRadius) {
-    if (lives > 0) {
-      lives--;
-      resetBallAndPaddle();
-    } else {
-      gameOver();
-    }
-  }
-  checkWinCondition(); // Vérifie si le joueur a gagné
-  animationFrameId = requestAnimationFrame(update); // Continue la boucle de jeu
 }
 
 init();
