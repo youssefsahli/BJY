@@ -447,19 +447,6 @@ function update() {
       speedX = (impactPoint / 2) * 0.1;
     }
 
-    // // Alernative de la gestion de la collision avec la raquette
-    // if (
-    //   ballX + ballRadius > paddleX &&
-    //   ballX - ballRadius < paddleX + paddleWidth &&
-    //   ballY + ballRadius > paddleY - ballRadius &&
-    //   ballY - ballRadius < paddleY + paddleHeight
-    // ) {
-    //   let impactPoint = ballX - (paddleX + paddleWidth / 2);
-    //   speedX += (impactPoint / paddleWidth) * 2; // Ajuste la vitesse horizontale basée sur le point d'impact
-    //   speedY = -speedY; // Inverse la direction verticale
-    //   ballY = paddleY - ballRadius - 1; // Ajuste la position de la balle pour éviter qu'elle ne "colle"
-    // }
-
     // Gestion des collisions avec les bords du canevas
     if (ballX < ballRadius || ballX > canvas.width - ballRadius) {
       speedX = -speedX;
@@ -467,7 +454,7 @@ function update() {
     if (ballY < ballRadius) {
       speedY = -speedY;
     } else if (ballY > canvas.height - ballRadius) {
-      // Si la balle n'est pas perforante et sort du canvas par le bas
+      // Si la balle sort du canvas par le bas
       if (lives > 0) {
         lives--;
         resetBallAndPaddle();
