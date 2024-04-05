@@ -1,54 +1,54 @@
 let canvas = document.getElementById("canvas");
 let ctx = canvas.getContext("2d");
 
-// Initialisation des variables
-// Stocke l'ID de la frame d'animation pour pouvoir l'arrêter
-let animationFrameId;
-let isGameOver = false;
-let score = 0;
-let lives = 0;
-let scoreHistory = [];
+// Initialisation des variables globales
+// Relatif au statut du jeu
+let animationFrameId; // Stocke l'ID de la frame d'animation pour pouvoir l'arrêter
+let isGameOver = false; // Indique si le jeu est terminé
+let score = 0; // Score du joueur
+let lives = 3; // Nombre de vies restantes
+let scoreHistory = []; // Tableau des meilleurs scores
 
-// Affiche le score et le nombre de vies
+// Relatif à la balle
+let ballRadius = 10; // Rayon de la balle
+let ballColor = "white"; // Couleur de la balle
+let ballX = canvas.width / 2; // Position initiale de la balle en X
+let ballY = canvas.height - 30; // Position initiale de la balle en Y
+let speedX = 0; // Vitesse initiale en X
+let speedY = 0; // Vitesse initiale en Y
+let ballLaunched = false; // Indique si la balle a été lancée
+let isPerforating = false; // Indique si la balle est perforante
+
+// Relatif aux briques
+let cols = 13; // Nombre de colonnes de briques
+let rows = 6; // Nombre de lignes de briques
+let brickWidth, brickHeight; // Ajusté dans adjustCanvas
+const bricks = []; // Tableau des briques
+
+// Relatif à la raquette
+let paddleWidth = canvas.innerWidth / 11; // Largeur de la raquette
+let paddleHeight = 20; // Hauteur de la raquette
+let paddleColor = "darksalmon"; // Couleur de la raquette
+let paddleX = (canvas.width - paddleWidth) / 2; // Position initiale de la raquette en X
+let paddleY = canvas.height - paddleHeight - 10; // Position initiale de la raquette en Y
+
+// Gestion des touches pressées
+let rightPressed = false;
+let leftPressed = false;
+
+// Affiche le score du joueur
 function drawScore() {
   ctx.font = "24px Arial";
   ctx.fillStyle = "white";
   ctx.fillText("Score: " + score, 30, 40);
 }
 
+// Affiche le nombre de vies restantes
 function drawLives() {
   ctx.font = "24px Arial";
   ctx.fillStyle = "white";
   ctx.fillText("Vies: " + lives, canvas.width - 95, 40);
 }
-
-// Dimensions initiales et position de la balle
-let ballRadius = 10;
-let ballColor = "white";
-let ballX = canvas.width / 2;
-let ballY = canvas.height - 30;
-let speedX = 0;
-let speedY = 0;
-let ballLaunched = false;
-let isPerforating = false;
-
-// Nombre et dimensions des briques
-let cols = 13;
-let rows = 6;
-let brickWidth, brickHeight; // Ajusté dans adjustCanvas
-let brickColor = "darkred";
-const bricks = [];
-
-// Dimensions et position initiales de la raquette
-let paddleWidth = canvas.innerWidth / 11;
-let paddleHeight = 20;
-let paddleColor = "darksalmon";
-let paddleX = (canvas.width - paddleWidth) / 2;
-let paddleY = canvas.height - paddleHeight - 10;
-
-// Gestion des touches fléchées
-let rightPressed = false;
-let leftPressed = false;
 
 // Ajuste le canevas à la taille de la fenêtre
 function adjustCanvas() {
@@ -70,29 +70,31 @@ adjustCanvas();
 
 // Initialisation des briques
 function init() {
-  isGameOver = false;
-  score = 0;
-  lives = 3;
-  score = 0;
-  speedX = 0;
-  speedY = 0;
-  index = 0;
+  isGameOver = false; // Réinitialise le statut du jeu
+  score = 0; // Réinitialise le score
+  lives = 3; // Réinitialise le nombre de vies
+  speedX = 0; // Réinitialise la vitesse en X
+  speedY = 0; // Réinitialise la vitesse en Y
+  let index = 0; // Réinitialise l'index des briques
   bricks.length = 0; // Efface le tableau existant
   for (let i = 0; i < rows; i++) {
     for (let j = 0; j < cols; j++) {
-      index++;
+      index++; // Incrémente l'index des briques
+      let color;
+      if (index % 17 === 0) {
+        color = "lightgreen"; // Brique perforante
+      } else if (index % 9 === 0) {
+        color = "darksalmon"; // Brique doublant la taille de la raquette
+      } else {
+        color = "darkred"; // Brique normale
+      }
       let brick = {
         x: canvas.width / 15 + j * brickWidth,
         y: canvas.height / 10 + i * brickHeight,
         status: 1, // La brique est initialement visible
-        color:
-          index % 17 === 0
-            ? "lightgreen"
-            : index % 9 === 0
-            ? "darksalmon"
-            : brickColor,
+        color: color,
       };
-      bricks.push(brick);
+      bricks.push(brick); // Ajoute la brique au tableau
     }
   }
 }
@@ -137,7 +139,7 @@ function launchBall(event) {
 }
 document.addEventListener("keydown", launchBall);
 
-// Accélère la balle en appuyant sur la touche "Shift"
+// Accélère la balle en appuyant sur la touche "Espace"
 function speedUp(event) {
   if (!isGameOver) {
     let speedLimit = 10;
@@ -151,6 +153,9 @@ function speedUp(event) {
     }
   }
 }
+document.addEventListener("keydown", speedUp);
+
+// Ralentit la balle en relâdhant la touche "Espace"
 function speedDown(event) {
   if (event.code === "Space" && ballLaunched) {
     if (speedY > 0) {
@@ -161,7 +166,6 @@ function speedDown(event) {
     }
   }
 }
-document.addEventListener("keydown", speedUp);
 document.addEventListener("keyup", speedDown);
 
 // Gestion des touches fléchées pour déplacer la raquette
@@ -175,6 +179,7 @@ function keyDownHandler(event) {
   }
 }
 
+// Gestion des touches fléchées pour arrêter de déplacer la raquette
 function keyUpHandler(event) {
   if (!isGameOver) {
     if (event.code === "ArrowLeft") {
@@ -191,7 +196,7 @@ document.addEventListener("keyup", keyUpHandler);
 // Déplace la raquette avec les touches fléchées
 function movePaddle() {
   if (rightPressed) {
-    paddleX += 10;
+    paddleX += 10; // Vitesse de déplacement de la raquette
     if (paddleX + paddleWidth > canvas.width) {
       paddleX = canvas.width - paddleWidth;
     }
@@ -203,13 +208,13 @@ function movePaddle() {
   }
 }
 
+// Affiche un message de fin de jeu
 function gameOver() {
   if (isGameOver) return;
   isGameOver = true; // Marque le jeu comme terminé
   // Dessiner un message sur le canvas
-  scoreHistory.push(score);
-  scoreHistory = scoreHistory.sort((a, b) => b - a).slice(0, 5);
-
+  scoreHistory.push(score); // Ajoute le score actuel au tableau des meilleurs scores
+  scoreHistory = scoreHistory.toSorted((a, b) => b - a).slice(0, 5); // Trie les scores par ordre décroissant et garde les 5 meilleurs
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = "black";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -252,12 +257,13 @@ function restartGameListener(event) {
   }
 }
 
+// Affiche un message de victoire
 function winGame() {
   if (isGameOver) return;
   isGameOver = true; // Marque le jeu comme terminé
   // Dessiner un message sur le canvas
   scoreHistory.push(score);
-  scoreHistory = scoreHistory.sort((a, b) => b - a).slice(0, 5);
+  scoreHistory = scoreHistory.toSorted((a, b) => b - a).slice(0, 5);
 
   // Dessiner un message sur le canvas
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -363,6 +369,7 @@ function perforatingBall() {
   }, 7000);
 }
 
+// Fonction principale de mise à jour du jeu
 function update() {
   if (!isGameOver) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -372,8 +379,6 @@ function update() {
     movePaddle();
     drawScore();
     drawLives();
-    // console.log("speedY :>> ", speedY);
-    // console.log("speedX :>> ", speedX);
 
     let collisionDetected = false; // S'assure qu'une seule collision est traitée par cycle
 
