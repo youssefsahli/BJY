@@ -73,3 +73,23 @@ export function clamp(n, a, b) {
 export function rand(min, max) {
   return Math.random() * (max - min) + min;
 }
+
+// Merci GPT
+/**
+ * Selects an item based on weighted randomness.
+ * @param {Array} options - Array of objects containing items and their weights.
+ * @returns The selected item.
+ */
+export function weightedRandom(options) {
+    // Calculate the total weight
+    const totalWeight = options.reduce((total, option) => total + option.weight, 0);
+    // Generate a random number
+    let randomNum = Math.random() * totalWeight;
+    // Determine which item to select
+    for (const option of options) {
+        randomNum -= option.weight;
+        if (randomNum < 0) {
+            return option.item;
+        }
+    }
+}

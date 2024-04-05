@@ -41,8 +41,9 @@ export class CollisionService {
             const normal = collision.normal;
             const other = collision.collider;
             if (collision) {
-                element.direction = element.direction.bounce(normal.norm());
-                // Now call the collider callback
+                element.direction = element.direction.bounce(normal.norm())
+                        .noise(0.2);
+                // *Now* call the collider callback
                 if (other.onCollision)
                     other.onCollision(this);
             }

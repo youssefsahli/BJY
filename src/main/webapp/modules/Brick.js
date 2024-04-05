@@ -13,17 +13,18 @@ export class Brick extends PhysicEntity {
         super(x, y, 71, 36);
         this.isStatic = true;
         this.padding = 5;
-        this.onCollision = (serv) => {
-            this.destroy();
-            serv.forget(this);
-        };
     }
-    
-    render (ctx) {
+
+    render(ctx) {
         super.render(ctx);
     }
-    
-    destroy () {
+
+    onCollision(serv) {
+        this.destroy();
+        serv.forget(this);
+    }
+
+    destroy() {
         this.queueFree = true;
     }
 }
