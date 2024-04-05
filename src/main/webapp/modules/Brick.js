@@ -7,6 +7,7 @@ export class Brick extends PhysicEntity {
     // TODO Differents types ?
     fillColor = makeGradient('#99c1f1', '#1a5fb4');
     queueFree = false;
+    showStroke = false;
 
     constructor(x, y) {
         super(x, y, 71, 36);
@@ -23,6 +24,6 @@ export class Brick extends PhysicEntity {
     }
     
     destroy () {
-        queueFree = true;
+        this.queueFree = true;
     }
 }

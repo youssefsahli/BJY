@@ -1,3 +1,4 @@
+'use strict';
 /**
  * Y. Sahli GPLv3
  * Main Canvas File
@@ -26,11 +27,11 @@ var walls = [
     new PhysicEntity(0,0, 5, canvas.height)
     
 ];
-walls.forEach((w) => w.isStatic = true);
+walls.forEach((w) => w.isStatic = true); // Make walls static
 collisionService.registerArray(walls);
 
 var background = new Rect(0, 0, canvas.width, canvas.height);
-background.color = makeGradient("#dc8add", "#c0bfbc", canvas.width, 0, canvas.width, canvas.height);
+background.color = makeGradient("#dc8add", "#613583", canvas.width, 0, canvas.width, canvas.height);
 background.showStroke = false;
 
 function init() {
@@ -43,10 +44,12 @@ function init() {
     player = new Slider(120, 330);
     player.center(true);
     player.color = makeGradient('#99c1f1', '#26a269');
+    player.showStroke = true;
     ball = player.spawnBall();
     collisionService.registerArray(gameGrid.bricks);
     collisionService.register(player);
     collisionService.register(ball);
+    console.log(player);
 }
 
 function update() {

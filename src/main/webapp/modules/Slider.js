@@ -9,12 +9,12 @@ export class Slider extends PhysicEntity {
     }
 
     launcherHeight = -5;
-    constructor(x, y) {
+    constructor(x=0, y=0) {
         super(x, y, 71, 10);
         this.padding = 0;
         this.h = 10;
         this.speed = 9;
-        this.isStatic = false;
+        this.isStatic = true; // Not really, it's a kinematic object, no autocollisions
     }
 
     update() {

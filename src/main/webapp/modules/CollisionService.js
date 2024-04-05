@@ -1,3 +1,4 @@
+'use strict';
 import { Vec2 } from "./vec2.js";
 import { Rect } from "./Rect.js";
 import { clamp } from "./utils.js";
@@ -36,9 +37,14 @@ export class CollisionService {
         for (const element of this.objects) {
             if (element.isStatic)
                 continue;
-            let normal = this.checkCollisions(element);
-            if (normal) {
+            const collision = this.checkCollisions(element);
+            const normal = collision.normal;
+            const other = collision.collider;
+            if (collision) {
                 element.direction = element.direction.bounce(normal.norm());
+                // Now call the collider callback
+                if (other.onCollision)
+                    other.onCollision(this);
             }
             element.move(element.direction);
         }
@@ -53,9 +59,11 @@ export class CollisionService {
         let others = this.objects.filter((o) => element !== o);
         for (const otherObj of others) {
             if (element.isCollidingWith(otherObj))
-//                console.log(otherObj);
-//                if (element.onCollision) element.onCollision();
-                return element.getCollisionInfo(otherObj);
+//                Return the first collision detected
+                return {
+                    collider: otherObj,
+                    normal: element.getCollisionInfo(otherObj)
+                };
         }
         return false;
     }
