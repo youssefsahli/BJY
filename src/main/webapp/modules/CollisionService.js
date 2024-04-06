@@ -40,6 +40,8 @@ export class CollisionService {
             if (collision) {
                 const {normal, penetration} = collision.data;
                 const other = collision.collider;
+                // Prevent tunneling effect
+                // https://nphysics.org/continuous_collision_detection/#penetration-handling-during-ccd-resolution
                 element.x += normal.x * penetration.x;
                 element.y += normal.y * penetration.y;
                 element.direction = element.direction
