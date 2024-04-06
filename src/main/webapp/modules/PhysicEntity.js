@@ -56,11 +56,12 @@ export class PhysicEntity extends ImageRect {
      * @param {type} otherRect
      * @returns {Vec2 | false}
      */
-    getCollisionInfo(otherRect) { // Merci chatGPT
+    getCollisionInfo(otherRect) {
     if (!this.isCollidingWith(otherRect))
         return false;
 
     let normal = new Vec2();
+    let penetration = new Vec2();
 
     // Calculate half sizes
     let halfWidth1 = this.w / 2;
@@ -82,16 +83,21 @@ export class PhysicEntity extends ImageRect {
     let overlapX = minDistanceX - Math.abs(distanceX);
     let overlapY = minDistanceY - Math.abs(distanceY);
 
-    // Determine the axis of least penetration
+    // Determine the axis of least penetration and set the penetration depth
     if (overlapX < overlapY) {
         normal.x = distanceX < 0 ? -1 : 1; // Assign normal based on the direction
         normal.y = 0;
+        penetration.x = overlapX;
+        penetration.y = 0;
     } else {
         normal.x = 0;
         normal.y = distanceY < 0 ? -1 : 1; // Assign normal based on the direction
+        penetration.x = 0;
+        penetration.y = overlapY;
     }
 
-    return normal;
+    return {normal, penetration};
 }
+
 
 }
