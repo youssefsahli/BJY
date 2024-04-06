@@ -1,4 +1,3 @@
-'use strict';
 import { Vec2 } from "./vec2.js";
 import { Rect } from "./Rect.js";
 import { clamp } from "./utils.js";
@@ -41,11 +40,12 @@ export class CollisionService {
             const normal = collision.normal;
             const other = collision.collider;
             if (collision) {
-                element.direction = element.direction.bounce(normal.norm())
+                element.direction = element.direction
+                        .bounce(normal.norm())
                         .noise(0.2);
                 // *Now* call the collider callback
                 if (other.onCollision)
-                    other.onCollision(this);
+                    other.onCollision(this, collision);
             }
             element.move(element.direction);
         }

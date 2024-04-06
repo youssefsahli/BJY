@@ -12,14 +12,15 @@ export class Brick extends PhysicEntity {
     constructor(x, y) {
         super(x, y, 71, 36);
         this.isStatic = true;
-        this.padding = 5;
+        this.padding = 1;
+        this.imageUrl = "images/brick.png";
     }
 
     render(ctx) {
         super.render(ctx);
     }
 
-    onCollision(serv) {
+    onCollision(serv, collision) {
         this.destroy();
         serv.forget(this);
     }

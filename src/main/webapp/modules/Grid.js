@@ -1,12 +1,14 @@
 import {CanvasObject} from "./CanvasObject.js";
 import {Brick} from "./Brick.js";
 import {HardBrick} from "./HardBrick.js";
+import {SpecialBrick} from "./SpecialBrick.js";
 import {weightedRandom} from "./utils.js";
 
 function getRandomBrick() {
     const opts = [
-        {item: Brick,     weight: 2},
-        {item: HardBrick, weight: 1}
+        {item: Brick,     weight: 10},
+        {item: HardBrick, weight: 2},
+        {item: SpecialBrick, weight: 1}
     ];
     return weightedRandom(opts);
 }

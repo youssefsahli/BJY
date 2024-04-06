@@ -31,25 +31,26 @@ walls.forEach((w) => w.isStatic = true); // Make walls static
 collisionService.registerArray(walls);
 
 var background = new Rect(0, 0, canvas.width, canvas.height);
-background.color = makeGradient("#dc8add", "#613583", canvas.width, 0, canvas.width, canvas.height);
+background.color = makeGradient("#29adff", "#1d2b53", canvas.width, 0, canvas.width, canvas.height);
 background.showStroke = false;
 
 function init() {
     inputHandler = new InputHandler();
-    inputHandler.addAction("Left", "ArrowLeft", () => player.move(Vec2.LEFT));
-    inputHandler.addAction("Right", "ArrowRight", () => player.move(Vec2.RIGHT));
-    inputHandler.addAction("Launch", " ", () => player.launch());
+    inputHandler.addAction("Left", "ArrowLeft", () => player.move(Vec2.LEFT), true);
+    inputHandler.addAction("Right", "ArrowRight", () => player.move(Vec2.RIGHT), true);
+    inputHandler.addAction("Launch", " ", () => {
+        if (!ball.fixed) return;
+        player.launch();
+    });
     gameGrid = new Grid();
     gameGrid.center();
     player = new Slider(120, 330);
     player.center(true);
     player.color = makeGradient('#99c1f1', '#26a269');
-    player.showStroke = true;
     ball = player.spawnBall();
     collisionService.registerArray(gameGrid.bricks);
     collisionService.register(player);
     collisionService.register(ball);
-    console.log(player);
 }
 
 function update() {

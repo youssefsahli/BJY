@@ -1,6 +1,7 @@
 import { Rect } from "./Rect.js";
 import { clamp } from "./utils.js";
 import { Vec2 } from "./vec2.js";
+import { ImageRect } from "./ImageRect.js";
 
 /**
  * 
@@ -9,7 +10,7 @@ import { Vec2 } from "./vec2.js";
  * @field {Vec2} direction
  * @field {Callable} onCollision;
  */
-export class PhysicEntity extends Rect {
+export class PhysicEntity extends ImageRect {
     direction = new Vec2();
     set dir (dir) {
         this.direction = dir;
@@ -21,9 +22,9 @@ export class PhysicEntity extends Rect {
         this.speed = speed;
     }
     
-    onCollision (collisionService) {
+    onCollision (collisionService, collision) {
         // Called when this entity is colliding with something
-        // Callback
+        // Callback stub
     }
     
     render (ctx) {

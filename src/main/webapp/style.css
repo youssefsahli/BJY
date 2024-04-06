@@ -1,9 +1,29 @@
 body {
-	background-color: midnightblue;
+    background-color: midnightblue;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+#canvasContainer {
+    width: 80vmin; /* 80% of the smaller dimension (width or height) of the viewport */
+    height: 80vmin; /* Same as width to maintain 1:1 aspect ratio */
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 #canvas {
-	border: medium inset #f9f06b;
-	background: #ffffff;
-	position: absolute;
+    border: medium inset #f9f06b;
+    background: #ffffff;
+    width: 100%; /* Fill the container */
+    height: 100%; /* Fill the container */
+    box-sizing: border-box;
+}
+
+.game-view {
+    -moz-user-select: none;
+    -webkit-user-select: none;
 }

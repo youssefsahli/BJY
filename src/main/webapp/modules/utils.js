@@ -62,6 +62,12 @@ export function circ(ctx, color, x, y, radius) {
     ctx.fill();
 }
 
+export function circOutline(ctx, color, x, y, radius) {
+    ctx.strokeStyle = color;
+    ctx.arc(x, y, radius, 0, 2*Math.PI);
+    ctx.stroke();
+}
+
 export function clamp(n, a, b) {
     let mi = Math.min(a, b);
     let ma = Math.max(a, b);

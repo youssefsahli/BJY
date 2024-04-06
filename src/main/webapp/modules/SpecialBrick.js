@@ -1,14 +1,13 @@
 import {Brick} from "./Brick.js";
 import {makeGradient} from "./utils.js";
 
-export class HardBrick extends Brick {
+export class SpecialBrick extends Brick {
     constructor (x, y) {
         super(x, y);
-        this.imageUrl = "images/hardbrick.png";
+        this.imageUrl = "images/specialbrick.png";
     }
     
-    lifes = 2
-    fillColor = makeGradient('#f9f06b', '#e5a50a');
+    fillColor = makeGradient('#b5835a', '#63452c');
     
     // Override
     /**
@@ -18,10 +17,7 @@ export class HardBrick extends Brick {
      * @returns {undefined}
      */
     onCollision(serv, collider) {
-        this.lifes -= 1;
-        if (this.lifes <= 0) {
-            this.destroy();
-            serv.forget(this);
-        } 
+        super.destroy()
+        serv.forget(this)
     }
 }

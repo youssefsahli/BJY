@@ -4,45 +4,39 @@ import {tri, clamp} from "./utils.js";
 import {PhysicEntity} from "./PhysicEntity.js";
 
 export class Slider extends PhysicEntity {
-    get centerPoint() {
-        return new Vec2(this.x + this.w / 2.0, this.y);
-    }
-
-    launcherHeight = -5;
-    constructor(x=0, y=0) {
+    launcherHeight = 5;
+    constructor(x = 0, y = 0) {
         super(x, y, 71, 10);
         this.padding = 0;
         this.h = 10;
         this.speed = 9;
         this.isStatic = true; // Not really, it's a kinematic object, no autocollisions
+        this.imageUrl = "images/slider.png";
     }
 
     update() {
         // Au départ la balle suit le slider
         if (this.ball && this.ball.fixed) {
-            let x = this.centerPoint.x;
-            let y = this.y + this.launcherHeight -10;
-            this.ball.x = x;
-            this.ball.y = y;
+            this.ball.lowPoint = new Vec2(this.centerPoint.x - this.ball.radius,
+                    this.centerPoint.y - this.ball.h);
         }
     }
 
     render(ctx) {
         super.render(ctx);
         let x = this.centerPoint.x;
-        tri(ctx, '#f66151', x, this.y + this.launcherHeight, x + 10,
+        tri(ctx, '#f66151', x, this.y - this.launcherHeight, x + 10,
                 this.y, x - 10, this.y);
     }
-    
-    
+
     spawnBall() {
         let x = this.centerPoint.x;
-        let y = this.y + this.launcherHeight;
-        this.ball = new Ball(x, y-10, 2);
+        let y = this.y - this.launcherHeight;
+        this.ball = new Ball(x, y);
         return this.ball;
     }
-    
-    launch () {
+
+    launch() {
         if (this.ball) {
             this.ball.direction = Vec2.UP.noise(0.1);
             this.ball.fixed = false;

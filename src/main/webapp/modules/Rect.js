@@ -3,7 +3,7 @@ import { Vec2 } from "./vec2.js";
 
 export class Rect extends CanvasObject {
     strokeColor = "#f66151";
-    showStroke = true;
+    showStroke = false;
     fillColor = "#77767b";
 
     set color(c) {
