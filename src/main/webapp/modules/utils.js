@@ -13,7 +13,7 @@
 	// Tu donnes les coordonnées pour la fenêtre → coordonnées du canvas.
 	// !! Non testé !!
 	// TODO Faire tests
-	var bbox = canvas.getBoundingClientRect();
+	let bbox = canvas.getBoundingClientRect();
 	return {
 		x: x - bbox.left * (canvas.width / bbox.width),
 		y: y - bbox.top * (canvas.height / bbox.height)
@@ -29,7 +29,7 @@
 export function makeGradient(c1, c2, x1=0, y1=0, x2 = 300, y2 = 20) {
 	const canvas = document.getElementById("canvas");
 	const ctx = canvas.getContext("2d");
-	var gradient = ctx.createLinearGradient(x1, y1, x2, y2);
+	let gradient = ctx.createLinearGradient(x1, y1, x2, y2);
 	gradient.addColorStop(0, c1);
 	gradient.addColorStop(1, c2);
 	return gradient;

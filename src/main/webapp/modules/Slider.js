@@ -1,6 +1,6 @@
 import {Ball} from "./Ball.js";
 import {Vec2} from "./vec2.js";
-import {tri, clamp} from "./utils.js";
+import {tri} from "./utils.js";
 import {PhysicEntity} from "./PhysicEntity.js";
 
 export class Slider extends PhysicEntity {

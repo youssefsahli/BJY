@@ -5,23 +5,22 @@
  */
 import { InputHandler } from "./modules/input_action.js";
 import { Vec2 } from "./modules/vec2.js";
-import {makeGradient, tri} from "./modules/utils.js";
-import {Brick} from "./modules/Brick.js";
+import {makeGradient} from "./modules/utils.js";
 import {Grid} from "./modules/Grid.js";
 import {Slider} from "./modules/Slider.js";
 import {CollisionService} from "./modules/CollisionService.js";
 import {PhysicEntity} from "./modules/PhysicEntity.js";
 import {Rect} from "./modules/Rect.js";
 
-var canvas = document.getElementById("canvas");
+let canvas = document.getElementById("canvas");
 const canvasWidth = canvas.width;
 const canvasHeight = canvas.height;
-var gameGrid;
-var player;
-var inputHandler;
-var ball;
-var collisionService = new CollisionService();
-var walls = [
+let gameGrid;
+let player;
+let inputHandler;
+let ball;
+let collisionService = new CollisionService();
+let walls = [
     new PhysicEntity(0,0, canvas.width, 5),
     new PhysicEntity(canvas.width-5,0, 5, canvas.height),
     new PhysicEntity(0,0, 5, canvas.height)
@@ -30,7 +29,7 @@ var walls = [
 walls.forEach((w) => w.isStatic = true); // Make walls static
 collisionService.registerArray(walls);
 
-var background = new Rect(0, 0, canvas.width, canvas.height);
+let background = new Rect(0, 0, canvas.width, canvas.height);
 background.color = makeGradient("#29adff", "#1d2b53", canvas.width, 0, canvas.width, canvas.height);
 background.showStroke = false;
 

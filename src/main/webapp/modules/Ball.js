@@ -1,4 +1,4 @@
-import { CanvasObject } from "./CanvasObject.js";
+
 import {circOutline, makeGradient} from "./utils.js";
 import {Vec2} from "./vec2.js";
 import {PhysicEntity} from "./PhysicEntity.js";
@@ -18,13 +18,15 @@ export class Ball extends PhysicEntity {
     }
 
     render(ctx) {
-//        circ(ctx, this.color, super.centerPoint.x, this.centerPoint.y, this.radius);
         super.render(ctx);
         if (this.showStroke) {
             circOutline(ctx, this.color, super.centerPoint.x, this.centerPoint.y, this.radius);
         }
     }
     
+    /**
+     * @param {number} r
+     */
     set radius (r) {
         this.w = r*2.0;
         this.h = r*2.0;

@@ -1,6 +1,4 @@
 import {makeGradient} from "./utils.js";
-import {Rect} from "./Rect.js";
-import {CanvasObject} from "./CanvasObject.js";
 import {PhysicEntity} from "./PhysicEntity.js";
 
 export class Brick extends PhysicEntity {
@@ -20,7 +18,7 @@ export class Brick extends PhysicEntity {
         super.render(ctx);
     }
 
-    onCollision(serv, collision) {
+    onCollision(serv, _collision) {
         this.destroy();
         serv.forget(this);
     }

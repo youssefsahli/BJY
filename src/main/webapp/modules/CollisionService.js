@@ -1,7 +1,3 @@
-import { Vec2 } from "./vec2.js";
-import { Rect } from "./Rect.js";
-import { clamp } from "./utils.js";
-
 export class CollisionService {
     objects = []
     /**
@@ -42,6 +38,7 @@ export class CollisionService {
                 const other = collision.collider;
                 // Prevent tunneling effect
                 // https://nphysics.org/continuous_collision_detection/#penetration-handling-during-ccd-resolution
+                // repositions element by penetration depth on collision
                 element.x += normal.x * penetration.x;
                 element.y += normal.y * penetration.y;
                 element.direction = element.direction

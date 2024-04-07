@@ -85,9 +85,7 @@ class InputAction {
  * @type ActionMap
  */
 class ActionMap extends Map {
-    constructor(kv) {
-        super(kv);
-    }
+    
     /**
      * 
      * @param {InputAction} i
