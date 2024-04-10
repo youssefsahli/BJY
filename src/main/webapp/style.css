@@ -1,20 +1,13 @@
 .main-title {
 	text-align: center;
+	font-family: "Arsenal", "Monospace", serif;
+	font-size: xx-large;
 }
 
 .game-view {
-	height: 100vh;
+	border-width: 1px;
 	margin:0;
-	background-color: black;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-}
-
-#canvasContainer {
-	width: 80vmin;
-	/* 80% of the smaller dimension (width or height) of the viewport */
-	height: 80vmin; /* Same as width to maintain 1:1 aspect ratio */
+	padding: 0;
 	display: flex;
 	justify-content: center;
 	align-items: center;

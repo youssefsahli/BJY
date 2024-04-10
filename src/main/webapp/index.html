@@ -1,21 +1,41 @@
 <!DOCTYPE html>
-<html lang="en-US">
+<html lang="en-US" color-mode="user">
 
 <head>
 <meta charset="UTF-8" />
+<link rel="icon" type="image/x-icon" href="images/icon.png">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Canvas experiment</title>
-<link rel="stylesheet" href="style.css" />
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css">
 </head>
 
 <body>
-	<div class="main-title">
-		Break Out !
-	</div>
-	<div class="game-view">
-		<div id="canvasContainer">
-			<canvas id="canvas" width=360 height=360></canvas>
+	<div class="navbar" role="navigation" aria-label="main navigation"
+		style="margin: auto; justify-content: center;">
+		<div class="navbar-brand">
+			<img alt="icon" width="64" height="64" src="images/icon.png">
 		</div>
-		<script src="./main.js" type="module"></script>
+		<div class="navbar-start">
+			<div class="navbar-item">
+				<div class="title">Break Out !</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="card">
+		<div class="card-content">
+			<div id="canvas-container" class="media container">
+				<canvas id="canvas" width="320" height="360"
+					style="height: 80vh; margin: auto;"></canvas>
+			</div>
+			<script src="./main.js" type="module"></script>
+		</div>
+		<div class="card-header">
+			<div class="card-header-title is-centered">
+				Score &nbsp; <strong class="score-value">0</strong>
+			</div>
+		</div>
 	</div>
 </body>
 
